@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { Toaster } from 'react-hot-toast'
 import App from './App'
 import store from './redux/store'
 import './styles/index.css'
@@ -11,6 +12,8 @@ createRoot(document.getElementById('root')).render(
     <Provider store={store}>
       <BrowserRouter>
         <App />
+        {/* Global toaster for app-wide notifications */}
+        <Toaster position="top-right" />
       </BrowserRouter>
     </Provider>
   </StrictMode>,

@@ -1,19 +1,49 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+import TopRouteLoader from './components/common/TopRouteLoader'
+import AppLayout from './layouts/AppLayout'
 import DashboardApiExample from './pages/DashboardApiExample'
+import LoginPage from './pages/auth/LoginPage'
+import SignupPage from './pages/auth/SignupPage'
 
 function App() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 p-6 md:p-10">
-      <div className="mx-auto max-w-4xl space-y-6">
-        <header>
-          <h1 className="text-3xl font-semibold">Ledgerly API Architecture</h1>
-          <p className="mt-2 text-slate-600">
-            {'Component/Page -> API files -> plugins/axios.js -> Backend API'}
-          </p>
-        </header>
+    <>
+      <TopRouteLoader />
 
-        <DashboardApiExample />
-      </div>
-    </main>
+      <Routes>
+        <Route
+          path="/"
+          element={<Navigate to="/ledger" replace />}
+        />
+
+        <Route
+          path="/login"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="/signup"
+          element={<SignupPage />}
+        />
+
+        <Route element={<AppLayout />}>
+          <Route
+            path="/ledger"
+            element={<DashboardApiExample />}
+          />
+
+          <Route
+            path="/upload"
+            element={<div>Upload Page</div>}
+          />
+
+          <Route
+            path="/categories"
+            element={<div>Categories Page</div>}
+          />
+        </Route>
+      </Routes>
+    </>
   )
 }
 
