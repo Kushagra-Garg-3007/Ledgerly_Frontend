@@ -95,7 +95,7 @@ function Button({
         focus:ring-[3px]
         focus:ring-[#8b6e59]/25
         focus:ring-offset-1
-
+        cursor-pointer
         ${variantClasses[variant] || variantClasses.primary}
         ${sizeClasses[size] || sizeClasses.md}
         ${fullWidth ? 'w-full' : ''}

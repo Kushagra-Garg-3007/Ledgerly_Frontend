@@ -51,7 +51,7 @@ function Navbar() {
           <div>
             <p
               className="
-                font-heading text-[1.02rem] font-bold
+                font-heading text-[1.35rem] font-bold
                 tracking-[-0.04em] text-[#1f1814]
               "
             >

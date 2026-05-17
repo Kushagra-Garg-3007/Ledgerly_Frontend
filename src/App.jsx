@@ -1,8 +1,9 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import TopRouteLoader from './components/common/TopRouteLoader'
 import AppLayout from './layouts/AppLayout'
 import DashboardApiExample from './pages/DashboardApiExample'
 import LoginPage from './pages/auth/LoginPage'
+import LandingPage from './pages/LandingPage'
 import SignupPage from './pages/auth/SignupPage'
 
 function App() {
@@ -11,11 +12,6 @@ function App() {
       <TopRouteLoader />
 
       <Routes>
-        <Route
-          path="/"
-          element={<Navigate to="/ledger" replace />}
-        />
-
         <Route
           path="/login"
           element={<LoginPage />}
@@ -27,6 +23,11 @@ function App() {
         />
 
         <Route element={<AppLayout />}>
+          <Route
+            path="/"
+            element={<LandingPage />}
+          />
+
           <Route
             path="/ledger"
             element={<DashboardApiExample />}
