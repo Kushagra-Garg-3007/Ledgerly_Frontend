@@ -1,4 +1,4 @@
-import axiosPlugin from '../plugins/axios'
+import axios from '../plugins/axios'
 import apiEndPoint from '../constants/apiEndpoints'
 
 const formatError = (error) => {
@@ -11,7 +11,7 @@ const formatError = (error) => {
 
 export const getCategories = async () => {
   try {
-    const response = await axiosPlugin.get(apiEndPoint.categories())
+    const response = await axios.get(apiEndPoint.categories())
     return response.data
   } catch (error) {
     throw new Error(formatError(error))
@@ -20,7 +20,7 @@ export const getCategories = async () => {
 
 export const createCategory = async (payload) => {
   try {
-    const response = await axiosPlugin.post(apiEndPoint.categories(), payload)
+    const response = await axios.post(apiEndPoint.categories(), payload)
     return response.data
   } catch (error) {
     throw new Error(formatError(error))

@@ -1,4 +1,4 @@
-import axiosPlugin from '../plugins/axios'
+import axios from '../plugins/axios'
 import apiEndPoint from '../constants/apiEndpoints'
 
 const formatError = (error) => {
@@ -11,7 +11,7 @@ const formatError = (error) => {
 
 export const getTransactions = async (params = {}) => {
   try {
-    const response = await axiosPlugin.get(apiEndPoint.transactions(), {
+    const response = await axios.get(apiEndPoint.transactions(), {
       params,
     })
     return response.data
@@ -22,7 +22,7 @@ export const getTransactions = async (params = {}) => {
 
 export const createTransaction = async (payload) => {
   try {
-    const response = await axiosPlugin.post(apiEndPoint.transactions(), payload)
+    const response = await axios.post(apiEndPoint.transactions(), payload)
     return response.data
   } catch (error) {
     throw new Error(formatError(error))
@@ -31,7 +31,7 @@ export const createTransaction = async (payload) => {
 
 export const updateTransaction = async (transactionId, payload) => {
   try {
-    const response = await axiosPlugin.put(
+    const response = await axios.put(
       apiEndPoint.transactionById(transactionId),
       payload,
     )
@@ -43,7 +43,7 @@ export const updateTransaction = async (transactionId, payload) => {
 
 export const deleteTransaction = async (transactionId) => {
   try {
-    const response = await axiosPlugin.delete(
+    const response = await axios.delete(
       apiEndPoint.transactionById(transactionId),
     )
     return response.data

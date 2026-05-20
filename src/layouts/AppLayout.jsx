@@ -6,7 +6,7 @@ function AppLayout() {
     <div
       className="
         relative
-        min-h-screen
+        flex min-h-screen flex-col
         overflow-x-hidden
         bg-[#f5f1ea]
         text-[#1f1814]
@@ -30,9 +30,8 @@ function AppLayout() {
         className="
           relative z-10
           mx-auto w-full max-w-7xl
-
+          flex-1
           px-4 pt-28 pb-6
-
           sm:px-6 lg:px-8
         "
       >
@@ -43,7 +42,6 @@ function AppLayout() {
       <footer
         className="
           relative z-10
-          mt-14
           border-t border-[#e7ddd2]/70
           bg-[#f5f1ea]/78
           backdrop-blur-xl

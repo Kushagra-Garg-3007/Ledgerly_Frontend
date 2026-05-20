@@ -25,14 +25,14 @@ const renderAmountCell = (value) => {
 const ledgerTableColumns = [
   {
     label: 'Date',
-    accessorKey: 'date',
+    key: 'date',
     cellClassName: 'text-[#6a5d55]',
   },
   {
     label: 'Description',
-    accessorKey: 'description',
+    key: 'description',
     cellClassName: 'text-[#2b2320]',
-    render: (value, row) => (
+    cell: (value, row) => (
       <div className="flex items-center gap-2">
         <span
           className={`text-sm font-semibold ${row.type === 'credit' ? 'text-emerald-700' : 'text-amber-700'}`}
@@ -50,24 +50,24 @@ const ledgerTableColumns = [
   },
   {
     label: 'Withdraw Amount',
-    accessorKey: 'withdrawAmount',
+    key: 'withdrawAmount',
     headerClassName: 'text-right',
     cellClassName: 'text-right font-semibold text-[#2f2621]',
-    render: renderAmountCell,
+    cell: renderAmountCell,
   },
   {
     label: 'Credit Amt',
-    accessorKey: 'creditAmount',
+    key: 'creditAmount',
     headerClassName: 'text-right',
     cellClassName: 'text-right font-semibold text-emerald-700',
-    render: renderAmountCell,
+    cell: renderAmountCell,
   },
   {
     label: 'Balance',
-    accessorKey: 'balance',
+    key: 'balance',
     headerClassName: 'text-right',
     cellClassName: 'text-right font-semibold text-[#2f2621]',
-    render: (value) => {
+    cell: (value) => {
       const formattedValue = formatAmount(value, true)
 
       return formattedValue ? (

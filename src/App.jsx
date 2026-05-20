@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom'
 import TopRouteLoader from './components/common/TopRouteLoader'
 import AppLayout from './layouts/AppLayout'
-import DashboardApiExample from './pages/DashboardApiExample'
 import LoginPage from './pages/auth/LoginPage'
 import LandingPage from './pages/LandingPage'
 import UploadPage from './pages/UploadPage'
 import SignupPage from './pages/auth/SignupPage'
+import CategoriesPage from './pages/CategoriesPage'
 
 function App() {
   return (
@@ -31,7 +31,7 @@ function App() {
 
           <Route
             path="/ledger"
-            element={<DashboardApiExample />}
+            element={<div>Ledger Page</div>}
           />
 
           <Route
@@ -41,7 +41,7 @@ function App() {
 
           <Route
             path="/categories"
-            element={<div>Categories Page</div>}
+            element={<CategoriesPage />}
           />
         </Route>
       </Routes>

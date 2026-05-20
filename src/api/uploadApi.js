@@ -1,4 +1,4 @@
-import axiosPlugin from '../plugins/axios'
+import axios from '../plugins/axios'
 import apiEndPoint from '../constants/apiEndpoints'
 
 const formatError = (error) => {
@@ -14,7 +14,7 @@ export const uploadFile = async (file, onUploadProgress) => {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await axiosPlugin.post(apiEndPoint.upload(), formData, {
+    const response = await axios.post(apiEndPoint.upload(), formData, {
       onUploadProgress,
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -30,7 +30,7 @@ export const uploadFile = async (file, onUploadProgress) => {
 
 export const getRecentUploads = async () => {
   try {
-    const response = await axiosPlugin.get(apiEndPoint.recentUploads())
+    const response = await axios.get(apiEndPoint.recentUploads())
     return response.data
   } catch (error) {
     throw new Error(formatError(error))
@@ -39,7 +39,7 @@ export const getRecentUploads = async () => {
 
 export const deleteUpload = async (uploadId) => {
   try {
-    const response = await axiosPlugin.delete(apiEndPoint.uploadById(uploadId))
+    const response = await axios.delete(apiEndPoint.uploadById(uploadId))
     return response.data
   } catch (error) {
     throw new Error(formatError(error))
@@ -48,7 +48,7 @@ export const deleteUpload = async (uploadId) => {
 
 export const retryUpload = async (uploadId) => {
   try {
-    const response = await axiosPlugin.post(apiEndPoint.retryUploadById(uploadId))
+    const response = await axios.post(apiEndPoint.retryUploadById(uploadId))
     return response.data
   } catch (error) {
     throw new Error(formatError(error))

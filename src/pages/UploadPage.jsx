@@ -1,26 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-  CheckCircle2,
-  CloudUpload,
-  FileCheck2,
-  FileSpreadsheet,
-  FileText,
-  HardDriveUpload,
-  LoaderCircle,
-  Sparkles,
-  UploadCloud,
-  CalendarDays,
-  X,
-} from 'lucide-react'
-
+import { CheckCircle2, CloudUpload, FileCheck2, FileSpreadsheet, FileText, HardDriveUpload, LoaderCircle, Sparkles, UploadCloud, CalendarDays, X } from 'lucide-react'
 import Button from '../components/common/Button'
 import DataTable from '../components/shared/DataTable'
-
-import {
-  uploadFile,
-  getRecentUploads,
-} from '../api/uploadApi'
-
+import Skeleton from '../components/skeletons/Skeleton'
+import SkeletonTable from '../components/skeletons/SkeletonTable'
+import { uploadFile, getRecentUploads, } from '../api/uploadApi'
 import { errorToast } from '../utils/toast'
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
@@ -76,6 +60,7 @@ function UploadPage() {
   const [uploadResponse, setUploadResponse] = useState(null)
   const [recentUploads, setRecentUploads] = useState([])
   const [loading, setLoading] = useState(false)
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
 
   const totalUploads = recentUploads.length
 
@@ -109,6 +94,7 @@ function UploadPage() {
       errorToast(error.message)
     } finally {
       setLoading(false)
+      setHasLoadedOnce(true)
     }
   }
 
@@ -224,18 +210,18 @@ function UploadPage() {
   const recentUploadColumns = [
     {
       label: 'File Name',
-      accessorKey: 'fileName',
+      key: 'fileName',
       cellClassName: 'font-medium text-[#3f342d]',
     },
     {
       label: 'Upload Date',
-      accessorKey: 'uploadDate',
+      key: 'uploadDate',
       cellClassName: 'text-[#6e6158]',
     },
     {
       label: 'Status',
-      accessorKey: 'status',
-      render: (value) => (
+      key: 'status',
+      cell: (value) => (
         <span
           className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${statusBadgeClasses(
             value
@@ -247,7 +233,7 @@ function UploadPage() {
     },
     {
       label: 'Type',
-      accessorKey: 'type',
+      key: 'type',
       cellClassName: 'text-[#6e6158]',
     },
   ]
@@ -266,6 +252,8 @@ function UploadPage() {
 
   const showCompletedState =
     uploadStatus === 'processed'
+
+  const showInitialDataSkeleton = loading && !hasLoadedOnce
 
   return (
     <div className="pb-4 text-[#1f1814]">
@@ -493,36 +481,59 @@ function UploadPage() {
             Upload Snapshot
           </h3>
 
-          <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-            <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
-              <p className="text-xs text-[#7d6f66]">Total uploads</p>
-              <p className="mt-1 text-xl font-semibold text-[#221a16]">{totalUploads}</p>
-            </div>
+          {showInitialDataSkeleton ? (
+            <>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3"
+                  >
+                    <Skeleton className="h-3 w-20 rounded-full" />
+                    <Skeleton className="mt-2 h-6 w-10 rounded-md" />
+                  </div>
+                ))}
+              </div>
 
-            <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
-              <p className="text-xs text-[#7d6f66]">Failed</p>
-              <p className="mt-1 text-xl font-semibold text-[#221a16]">{failedUploads}</p>
-            </div>
+              <div className="mt-4 rounded-xl border border-[#e5d9ca] bg-white p-4">
+                <Skeleton className="h-3 w-24 rounded-full" />
+                <Skeleton className="mt-3 h-4 w-40 rounded-full" />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
+                  <p className="text-xs text-[#7d6f66]">Total uploads</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{totalUploads}</p>
+                </div>
 
-            <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
-              <p className="text-xs text-[#7d6f66]">Processing</p>
-              <p className="mt-1 text-xl font-semibold text-[#221a16]">{processingUploads}</p>
-            </div>
+                <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
+                  <p className="text-xs text-[#7d6f66]">Failed</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{failedUploads}</p>
+                </div>
 
-            <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
-              <p className="text-xs text-[#7d6f66]">Completed</p>
-              <p className="mt-1 text-xl font-semibold text-[#221a16]">{completedUploads}</p>
-            </div>
-          </div>
+                <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
+                  <p className="text-xs text-[#7d6f66]">Processing</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{processingUploads}</p>
+                </div>
 
-          <div className="mt-4 rounded-xl border border-[#e5d9ca] bg-white p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#86756a]">
-              Last Processed
-            </p>
-            <p className="mt-2 text-sm font-medium text-[#3b302a]">
-              {lastProcessed}
-            </p>
-          </div>
+                <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
+                  <p className="text-xs text-[#7d6f66]">Completed</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{completedUploads}</p>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-[#e5d9ca] bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#86756a]">
+                  Last Processed
+                </p>
+                <p className="mt-2 text-sm font-medium text-[#3b302a]">
+                  {lastProcessed}
+                </p>
+              </div>
+            </>
+          )}
 
           <div className="mt-4 rounded-xl border border-[#e5d8ca] bg-gradient-to-b from-[#fffaf3] to-[#f8f1e7] p-4">
             <p className="text-sm font-semibold text-[#3c3028]">Quick tips</p>
@@ -618,7 +629,9 @@ function UploadPage() {
           )}
         </div>
 
-        {loading ? (
+        {showInitialDataSkeleton ? (
+          <SkeletonTable rows={5} />
+        ) : loading ? (
           <div className="rounded-2xl border border-[#e7dccf] bg-white/80 px-6 py-10 text-center text-[#6f6258]">
             <div className="inline-flex items-center gap-2 text-sm font-medium">
               <LoaderCircle
