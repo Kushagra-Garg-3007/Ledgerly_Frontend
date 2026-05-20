@@ -4,6 +4,7 @@ import AppLayout from './layouts/AppLayout'
 import DashboardApiExample from './pages/DashboardApiExample'
 import LoginPage from './pages/auth/LoginPage'
 import LandingPage from './pages/LandingPage'
+import UploadPage from './pages/UploadPage'
 import SignupPage from './pages/auth/SignupPage'
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
 
           <Route
             path="/upload"
-            element={<div>Upload Page</div>}
+            element={<UploadPage />}
           />
 
           <Route

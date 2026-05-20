@@ -19,6 +19,11 @@ const apiEndPoint = {
 
   ledgers: () => '/ledgers',
   ledgerById: (ledgerId) => `/ledgers/${ledgerId}`,
+
+  upload: () => '/upload',
+  recentUploads: () => '/uploads/recent',
+  uploadById: (uploadId) => `/uploads/${uploadId}`,
+  retryUploadById: (uploadId) => `/uploads/${uploadId}/retry`,
 }
 
 export default apiEndPoint

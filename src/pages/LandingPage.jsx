@@ -1,6 +1,4 @@
-
 import { ArrowRight, BadgeCheck, BookOpen, Filter, Search, ShieldCheck, Upload, Wallet, Sparkles, TrendingUp, FileUp } from 'lucide-react'
-
 import { Link } from 'react-router-dom'
 import Button from '../components/common/Button'
 import Card from '../components/common/Card'
