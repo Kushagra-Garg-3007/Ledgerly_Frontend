@@ -1,5 +1,6 @@
 import { ArrowRight, BadgeCheck, BookOpen, Filter, Search, ShieldCheck, Upload, Wallet, Sparkles, TrendingUp, FileUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import AuthGuard from '../components/auth/AuthGuard'
 import Button from '../components/common/Button'
 import Card from '../components/common/Card'
 import LedgerTable from '../components/shared/LedgerTable'
@@ -44,20 +45,24 @@ function LandingPage() {
           </p>
 
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link to="/upload">
-              <Button size="lg" className="rounded-2xl px-6">
-                <Upload size={18} />
-                Upload Statement
-              </Button>
-            </Link>
+            <AuthGuard>
+              <Link to="/upload">
+                <Button size="lg" className="rounded-2xl px-6">
+                  <Upload size={18} />
+                  Upload Statement
+                </Button>
+              </Link>
+            </AuthGuard>
 
-            <Link to="/ledger">
-              <Button variant="outline" size="lg" className="rounded-2xl px-6">
-                <BookOpen size={18} />
-                View Ledger
-                <ArrowRight size={16} />
-              </Button>
-            </Link>
+            <AuthGuard>
+              <Link to="/ledger">
+                <Button variant="outline" size="lg" className="rounded-2xl px-6">
+                  <BookOpen size={18} />
+                  View Ledger
+                  <ArrowRight size={16} />
+                </Button>
+              </Link>
+            </AuthGuard>
           </div>
         </div>
       </section>
@@ -302,17 +307,22 @@ function LandingPage() {
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link to="/upload">
-                <Button size="lg" className="rounded-xl px-6">
-                  Upload Your Statement
-                </Button>
-              </Link>
 
-              <Link to="/ledger">
-                <Button variant="outline" size="lg" className="rounded-xl px-6">
-                  Explore Ledger
-                </Button>
-              </Link>
+              <AuthGuard>
+                <Link to="/upload">
+                  <Button size="lg" className="rounded-xl px-6">
+                    Upload Your Statement
+                  </Button>
+                </Link>
+              </AuthGuard>
+
+              <AuthGuard>
+                <Link to="/ledger">
+                  <Button variant="outline" size="lg" className="rounded-xl px-6">
+                    Explore Ledger
+                  </Button>
+                </Link>
+              </AuthGuard>
             </div>
           </div>
         </Card>

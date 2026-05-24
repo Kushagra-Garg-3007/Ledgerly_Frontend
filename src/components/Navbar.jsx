@@ -1,9 +1,14 @@
 import { Link, NavLink } from 'react-router-dom'
-import { BookOpen, Receipt, User } from 'lucide-react'
+import { BookOpen, User } from 'lucide-react'
+import { useSelector } from 'react-redux'
 import navItems from '../constants/navItems'
+import AuthGuard from './auth/AuthGuard'
+import UserMenu from './auth/UserMenu'
 import Button from './common/Button'
 
 function Navbar() {
+  const { initialized, isAuthenticated } = useSelector((state) => state.auth)
+
   return (
     <header
       className="
@@ -29,7 +34,7 @@ function Navbar() {
         "
       >
         <Link
-          to="/ledger"
+          to="/"
           className="
             flex items-center gap-3
             transition-opacity duration-200
@@ -69,51 +74,62 @@ function Navbar() {
             const Icon = item.icon
 
             return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) => `
-                  group relative flex items-center gap-2 rounded-xl
-                  px-3.5 py-2 font-body text-sm font-medium
-                  transition-all duration-200 ease-out
-                  ${isActive
-                    ? `
-                        bg-[#ece2d7]
-                        text-[#1f1814]
-                        shadow-[0_1px_2px_rgba(40,28,20,0.04)]
-                      `
-                    : `
-                        text-[#6b5e57]
-                        hover:bg-[#efe7de]
-                        hover:text-[#2f241f]
-                      `
-                  }
-                `}
-              >
-                <Icon size={16} className="transition-transform duration-200 group-hover:scale-[1.04]" />
-                <span>{item.label}</span>
-              </NavLink>
+              <AuthGuard key={item.to}>
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) => `
+                    group relative flex items-center gap-2 rounded-xl
+                    px-3.5 py-2 font-body text-sm font-medium
+                    transition-all duration-200 ease-out
+                    ${isActive
+                      ? `
+                          bg-[#ece2d7]
+                          text-[#1f1814]
+                          shadow-[0_1px_2px_rgba(40,28,20,0.04)]
+                        `
+                      : `
+                          text-[#6b5e57]
+                          hover:bg-[#efe7de]
+                          hover:text-[#2f241f]
+                        `
+                    }
+                  `}
+                >
+                  <Icon size={16} className="transition-transform duration-200 group-hover:scale-[1.04]" />
+                  <span>{item.label}</span>
+                </NavLink>
+              </AuthGuard>
             )
           })}
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link to="/login">
-            <Button
-              variant="outline"
-              size="md"
-              className="hidden min-w-[84px] sm:inline-flex"
-            >
-              Sign in
-            </Button>
-          </Link>
+          {initialized ? (
+            isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button
+                    variant="outline"
+                    size="md"
+                    className="hidden min-w-[84px] sm:inline-flex"
+                  >
+                    Sign in
+                  </Button>
+                </Link>
 
-          <Link to="/signup">
-            <Button size="md" className="gap-2">
-              <User size={15} />
-              <span className="hidden sm:inline">Get Started</span>
-            </Button>
-          </Link>
+                <Link to="/signup">
+                  <Button size="md" className="gap-2">
+                    <User size={15} />
+                    <span className="hidden sm:inline">Get Started</span>
+                  </Button>
+                </Link>
+              </>
+            )
+          ) : (
+            <div className="h-9 w-[140px]" />
+          )}
         </div>
       </div>
     </header>

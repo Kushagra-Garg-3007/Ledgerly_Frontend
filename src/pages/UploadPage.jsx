@@ -59,26 +59,15 @@ function UploadPage() {
 
   const [uploadResponse, setUploadResponse] = useState(null)
   const [recentUploads, setRecentUploads] = useState([])
+  const [uploadSummary, setUploadSummary] = useState({
+    totalUploads: 0,
+    failedUploads: 0,
+    processingUploads: 0,
+    completedUploads: 0,
+    lastProcessedFileName: '',
+  })
   const [loading, setLoading] = useState(false)
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
-
-  const totalUploads = recentUploads.length
-
-  const failedUploads = recentUploads.filter(
-    (item) => item.status === 'Failed'
-  ).length
-
-  const processingUploads = recentUploads.filter(
-    (item) => item.status === 'Processing'
-  ).length
-
-  const completedUploads = recentUploads.filter(
-    (item) => item.status === 'Processed'
-  ).length
-
-  const lastProcessed =
-    recentUploads.find((item) => item.status === 'Processed')
-      ?.fileName || 'No file processed yet'
 
   const backendStatusNote = uploadResponse?.message || ''
   const backendReferenceId = uploadResponse?.id || ''
@@ -88,9 +77,25 @@ function UploadPage() {
 
     try {
       const data = await getRecentUploads()
-      setRecentUploads(Array.isArray(data) ? data : [])
+      setRecentUploads(data?.uploads || [])
+
+      setUploadSummary({
+        totalUploads: data?.totalUploads || 0,
+        failedUploads: data?.failedUploads || 0,
+        processingUploads: data?.processingUploads || 0,
+        completedUploads: data?.completedUploads || 0,
+        lastProcessedFileName:
+          data?.lastProcessedFileName || 'No file processed yet',
+      })
     } catch (error) {
       setRecentUploads([])
+      setUploadSummary({
+        totalUploads: 0,
+        failedUploads: 0,
+        processingUploads: 0,
+        completedUploads: 0,
+        lastProcessedFileName: 'No file processed yet',
+      })
       errorToast(error.message)
     } finally {
       setLoading(false)
@@ -505,22 +510,22 @@ function UploadPage() {
               <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Total uploads</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{totalUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.totalUploads}</p>
                 </div>
 
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Failed</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{failedUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.failedUploads}</p>
                 </div>
 
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Processing</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{processingUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.processingUploads}</p>
                 </div>
 
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Completed</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{completedUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.completedUploads}</p>
                 </div>
               </div>
 
@@ -529,7 +534,7 @@ function UploadPage() {
                   Last Processed
                 </p>
                 <p className="mt-2 text-sm font-medium text-[#3b302a]">
-                  {lastProcessed}
+                  {uploadSummary.lastProcessedFileName}
                 </p>
               </div>
             </>

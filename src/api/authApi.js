@@ -14,7 +14,7 @@ export const login = async (payload) => {
     const response = await axios.post(apiEndPoint.authLogin(), payload)
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }
 
@@ -23,7 +23,7 @@ export const register = async (payload) => {
     const response = await axios.post(apiEndPoint.authSignup(), payload)
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }
 
@@ -32,7 +32,16 @@ export const logout = async () => {
     const response = await axios.post(apiEndPoint.authLogout())
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
+  }
+}
+
+export const refreshSession = async () => {
+  try {
+    const response = await axios.post(apiEndPoint.authRefresh())
+    return response.data
+  } catch (error) {
+    throw new Error(formatError(error), { cause: error })
   }
 }
 
@@ -41,6 +50,6 @@ export const getProfile = async () => {
     const response = await axios.get(apiEndPoint.authProfile())
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }

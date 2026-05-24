@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { Eye, EyeOff } from 'lucide-react'
@@ -10,11 +10,11 @@ import AuthLayout from '../../layouts/AuthLayout'
 import { errorToast, infoToast, successToast } from '../../utils/toast'
 import { setAuthError, setAuthLoading, setUser } from '../../redux/authSlice'
 import { authValidationRules } from '../../utils/auth/validationRules'
-import { persistAuthToken } from '../../utils/auth/session'
 
 function LoginPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const { loading } = useSelector((state) => state.auth)
 
@@ -44,31 +44,33 @@ function LoginPage() {
         rememberMe: values.rememberMe,
       })
 
-      persistAuthToken(loginData)
-
       let userData =
         loginData?.user ||
         loginData?.data?.user ||
         null
 
-      try {
-        const profileData = await getProfile()
+      // try {
+      //   const profileData = await getProfile()
 
-        userData =
-          profileData?.data ||
-          profileData?.user ||
-          userData
-      } catch {
-        infoToast(
-          'Logged in. Profile sync will retry automatically.'
-        )
-      }
+      //   userData =
+      //     profileData?.data ||
+      //     profileData?.user ||
+      //     userData
+      // } catch {
+      //   infoToast(
+      //     'Logged in. Profile sync will retry automatically.'
+      //   )
+      // }
 
       dispatch(setUser(userData))
 
       successToast('Welcome back. Login successful.')
 
-      navigate('/ledger')
+      const nextPath =
+        location.state?.from?.pathname ||
+        '/'
+
+      navigate(nextPath, { replace: true })
     } catch (error) {
       dispatch(setAuthError(error.message))
 
@@ -150,28 +152,6 @@ function LoginPage() {
         />
 
         <div className="flex items-center justify-between gap-3 pt-1">
-          <label
-            className="
-              inline-flex items-center gap-2.5
-              font-body
-              text-sm
-              text-[#6b5e57]
-            "
-          >
-            <input
-              type="checkbox"
-              className="
-                h-4 w-4
-                rounded
-                border-[#c8b6a3]
-                text-[#5a473d]
-                focus:ring-[#d9c2ad]/55
-              "
-              {...register('rememberMe')}
-            />
-
-            Remember me
-          </label>
 
           <Link
             to="#"

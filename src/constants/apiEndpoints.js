@@ -4,6 +4,7 @@ const apiEndPoint = {
   authLogin: () => '/auth/login',
   authSignup: () => '/auth/signup',
   authLogout: () => '/auth/logout',
+  authRefresh: () => '/auth/refresh',
   authProfile: () => '/auth/profile',
 
   users: () => '/users',
@@ -20,7 +21,7 @@ const apiEndPoint = {
   ledgers: () => '/ledgers',
   ledgerById: (ledgerId) => `/ledgers/${ledgerId}`,
 
-  upload: () => '/upload',
+  upload: () => '/uploads/statement',
   recentUploads: () => '/uploads/recent',
   uploadById: (uploadId) => `/uploads/${uploadId}`,
   retryUploadById: (uploadId) => `/uploads/${uploadId}/retry`,

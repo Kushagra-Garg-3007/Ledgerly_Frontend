@@ -1,16 +1,21 @@
 import { Route, Routes } from 'react-router-dom'
 import TopRouteLoader from './components/common/TopRouteLoader'
+import AuthInitializer from './components/auth/AuthInitializer'
+import ProtectedRoute from './components/auth/ProtectedRoute'
 import AppLayout from './layouts/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
 import LandingPage from './pages/LandingPage'
 import UploadPage from './pages/UploadPage'
 import SignupPage from './pages/auth/SignupPage'
 import CategoriesPage from './pages/CategoriesPage'
+import ProfilePage from './pages/ProfilePage'
+import LedgerPage from './pages/LedgerPage'
 
 function App() {
   return (
     <>
       <TopRouteLoader />
+      <AuthInitializer />
 
       <Routes>
         <Route
@@ -29,20 +34,27 @@ function App() {
             element={<LandingPage />}
           />
 
-          <Route
-            path="/ledger"
-            element={<div>Ledger Page</div>}
-          />
+          <Route element={<ProtectedRoute />}>
+            <Route
+              path="/ledger"
+              element={<LedgerPage />}
+            />
 
-          <Route
-            path="/upload"
-            element={<UploadPage />}
-          />
+            <Route
+              path="/profile"
+              element={<ProfilePage />}
+            />
 
-          <Route
-            path="/categories"
-            element={<CategoriesPage />}
-          />
+            <Route
+              path="/upload"
+              element={<UploadPage />}
+            />
+
+            <Route
+              path="/categories"
+              element={<CategoriesPage />}
+            />
+          </Route>
         </Route>
       </Routes>
     </>
