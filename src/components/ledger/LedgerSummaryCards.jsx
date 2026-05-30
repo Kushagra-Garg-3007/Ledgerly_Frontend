@@ -1,4 +1,5 @@
 import Card from '../common/Card'
+import SkeletonCard from '../skeletons/SkeletonCard'
 
 function formatAmount(value = 0) {
   return `₹${Number(value || 0).toLocaleString('en-IN', {
@@ -7,7 +8,25 @@ function formatAmount(value = 0) {
   })}`
 }
 
-function LedgerSummaryCards({ summary }) {
+function LedgerSummaryCards({
+  summary,
+  loading = false,
+}) {
+  if (loading) {
+    return (
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <SkeletonCard
+            key={index}
+            className="rounded-[1.4rem]"
+            lines={1}
+            subtitle={false}
+          />
+        ))}
+      </section>
+    )
+  }
+
   const cards = [
     {
       id: 'credit',
@@ -24,13 +43,13 @@ function LedgerSummaryCards({ summary }) {
     {
       id: 'balance',
       label: 'Current Balance',
-      value: formatAmount(summary.currentBalance),
+      value: formatAmount(summary.balance),
       tone: 'text-[#2f2621]',
     },
     {
       id: 'totalTransactions',
       label: 'Total Transactions',
-      value: Number(summary.totalTransactions || 0).toLocaleString('en-IN'),
+      value: Number(summary.transactionCount || 0).toLocaleString('en-IN'),
       tone: 'text-[#2f2621]',
     },
   ]

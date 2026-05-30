@@ -16,7 +16,18 @@ export const getTransactions = async (params = {}) => {
     })
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
+  }
+}
+
+export const getTransactionSummary = async (params = {}) => {
+  try {
+    const response = await axios.get(apiEndPoint.transactionSummary(), {
+      params,
+    })
+    return response.data
+  } catch (error) {
+    throw new Error(formatError(error), { cause: error })
   }
 }
 
@@ -25,7 +36,7 @@ export const createTransaction = async (payload) => {
     const response = await axios.post(apiEndPoint.transactions(), payload)
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }
 
@@ -37,7 +48,7 @@ export const updateTransaction = async (transactionId, payload) => {
     )
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }
 
@@ -48,6 +59,6 @@ export const deleteTransaction = async (transactionId) => {
     )
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }

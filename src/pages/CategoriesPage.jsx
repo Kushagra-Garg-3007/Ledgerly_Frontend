@@ -13,11 +13,12 @@ function CategoriesPage() {
   const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [isAddingCategory, setIsAddingCategory] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState('')
-  const [newCategoryColor, setNewCategoryColor] = useState(categoryColors[0].value)
   const [editingId, setEditingId] = useState(null)
   const [editingName, setEditingName] = useState('')
-  const [editingColor, setEditingColor] = useState('')
   const [deletingId, setDeletingId] = useState(null)
+
+  const isMiscCategory = (category) =>
+    category?.name?.trim().toLowerCase() === 'misc'
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -69,23 +70,21 @@ function CategoriesPage() {
       {
         id: `category-${Date.now()}`,
         name: newCategoryName.trim(),
-        color: newCategoryColor,
+        color: categoryColors[categories.length % categoryColors.length].value,
         transactionCount: 0,
       },
     ])
 
     setNewCategoryName('')
-    setNewCategoryColor(categoryColors[0].value)
     setIsAddingCategory(false)
   }
 
   const handleEditCategory = (id) => {
     const target = categories.find((item) => item.id === id)
-    if (!target) return
+    if (!target || isMiscCategory(target)) return
 
     setEditingId(id)
     setEditingName(target.name)
-    setEditingColor(target.color)
   }
 
   const handleSaveEdit = (id) => {
@@ -94,17 +93,19 @@ function CategoriesPage() {
     setCategories(
       categories.map((item) => (
         item.id === id
-          ? { ...item, name: editingName.trim(), color: editingColor }
+          ? { ...item, name: editingName.trim() }
           : item
       ))
     )
 
     setEditingId(null)
     setEditingName('')
-    setEditingColor('')
   }
 
   const handleDeleteCategory = (id) => {
+    const target = categories.find((item) => item.id === id)
+    if (!target || isMiscCategory(target)) return
+
     setCategories(categories.filter((item) => item.id !== id))
     setDeletingId(null)
   }
@@ -169,7 +170,6 @@ function CategoriesPage() {
                   onClick={() => {
                     setIsAddingCategory(false)
                     setNewCategoryName('')
-                    setNewCategoryColor(categoryColors[0].value)
                   }}
                   className="rounded-xl px-5"
                 >
@@ -178,26 +178,6 @@ function CategoriesPage() {
               </div>
             </div>
 
-            <div className="mt-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#86756a]">
-                Pick a color
-              </p>
-
-              <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
-                {categoryColors.map((item) => (
-                  <button
-                    key={item.value}
-                    type="button"
-                    onClick={() => setNewCategoryColor(item.value)}
-                    className={`h-8 rounded-md border transition-all ${item.value} ${newCategoryColor === item.value
-                      ? 'ring-2 ring-[#6e5b4d] ring-offset-2'
-                      : 'hover:opacity-80'
-                      }`}
-                    title={item.name}
-                  />
-                ))}
-              </div>
-            </div>
           </Card>
         )}
 
@@ -218,105 +198,95 @@ function CategoriesPage() {
           </Card>
         ) : (
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((category) => (
-              <Card
-                key={category.id}
-                className="group rounded-[1.4rem] border-[#e4d8cb] bg-white/75 p-5"
-              >
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl border font-semibold ${category.color}`}>
-                    {category.name[0]}
+            {categories.map((category) => {
+              const protectedCategory = isMiscCategory(category)
+
+              return (
+                <Card
+                  key={category.id}
+                  className="group rounded-[1.4rem] border-[#e4d8cb] bg-white/75 p-5"
+                >
+                  <div className="mb-4 flex items-start justify-between gap-3">
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl border font-semibold ${category.color}`}>
+                      {category.name[0]}
+                    </div>
+
+                    {editingId !== category.id && !protectedCategory && (
+                      <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          type="button"
+                          onClick={() => handleEditCategory(category.id)}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5d8c9] bg-white/80 text-[#6b5a4f] transition-colors hover:bg-[#faf5ee]"
+                          title="Edit category"
+                        >
+                          <Edit2 size={14} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setDeletingId(category.id)}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-200 bg-rose-50/80 text-rose-700 transition-colors hover:bg-rose-100"
+                          title="Delete category"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  {editingId !== category.id && (
-                    <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-                      <button
-                        type="button"
-                        onClick={() => handleEditCategory(category.id)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5d8c9] bg-white/80 text-[#6b5a4f] transition-colors hover:bg-[#faf5ee]"
-                        title="Edit category"
-                      >
-                        <Edit2 size={14} />
-                      </button>
+                  {editingId === category.id ? (
+                    <div className="space-y-3">
+                      <Input
+                        name={`edit-category-${category.id}`}
+                        value={editingName}
+                        placeholder="Category name"
+                        onChange={(event) => setEditingName(event.target.value)}
+                      />
 
-                      <button
-                        type="button"
-                        onClick={() => setDeletingId(category.id)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-200 bg-rose-50/80 text-rose-700 transition-colors hover:bg-rose-100"
-                        title="Delete category"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  )}
-                </div>
+                      <div className="flex gap-2 pt-1">
+                        <Button
+                          size="sm"
+                          onClick={() => handleSaveEdit(category.id)}
+                          className="flex-1 rounded-lg"
+                        >
+                          Save
+                        </Button>
 
-                {editingId === category.id ? (
-                  <div className="space-y-3">
-                    <Input
-                      name={`edit-category-${category.id}`}
-                      value={editingName}
-                      placeholder="Category name"
-                      onChange={(event) => setEditingName(event.target.value)}
-                    />
-
-                    <div>
-                      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#86756a]">
-                        Color
-                      </p>
-
-                      <div className="grid grid-cols-4 gap-2">
-                        {categoryColors.map((item) => (
-                          <button
-                            key={item.value}
-                            type="button"
-                            onClick={() => setEditingColor(item.value)}
-                            className={`h-7 rounded border transition-all ${item.value} ${editingColor === item.value
-                              ? 'ring-2 ring-[#6e5b4d]'
-                              : 'hover:opacity-80'
-                              }`}
-                            title={item.name}
-                          />
-                        ))}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="rounded-lg"
+                          onClick={() => {
+                            setEditingId(null)
+                            setEditingName('')
+                          }}
+                        >
+                          Cancel
+                        </Button>
                       </div>
                     </div>
+                  ) : (
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-xl font-semibold tracking-[-0.03em] text-[#1f1814]">
+                          {category.name}
+                        </h3>
 
-                    <div className="flex gap-2 pt-1">
-                      <Button
-                        size="sm"
-                        onClick={() => handleSaveEdit(category.id)}
-                        className="flex-1 rounded-lg"
-                      >
-                        Save
-                      </Button>
+                        {protectedCategory ? (
+                          <span className="rounded-full border border-[#e5d8c9] bg-[#f8f4ef] px-2 py-0.5 text-xs font-semibold text-[#7a6657]">
+                            Default
+                          </span>
+                        ) : null}
+                      </div>
 
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="rounded-lg"
-                        onClick={() => {
-                          setEditingId(null)
-                          setEditingName('')
-                          setEditingColor('')
-                        }}
-                      >
-                        Cancel
-                      </Button>
+                      <p className="mt-2 text-sm text-[#72645a]">
+                        {category.transactionCount} transaction{category.transactionCount !== 1 ? 's' : ''}
+                      </p>
                     </div>
-                  </div>
-                ) : (
-                  <div>
-                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-[#1f1814]">
-                      {category.name}
-                    </h3>
-
-                    <p className="mt-2 text-sm text-[#72645a]">
-                      {category.transactionCount} transaction{category.transactionCount !== 1 ? 's' : ''}
-                    </p>
-                  </div>
-                )}
-              </Card>
-            ))}
+                  )}
+                </Card>
+              )
+            })}
           </section>
         )}
       </section>

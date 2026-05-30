@@ -1,15 +1,22 @@
 import DataTable from './DataTable'
-import categoryStyles from '../../constants/categoryStyles'
 import SkeletonTable from '../skeletons/SkeletonTable'
 
-const formatAmount = (value, showDecimals = false) => {
+const formatAmount = (value) => {
   if (value === null || value === undefined || value === '') {
     return null
   }
 
-  return Number(value).toLocaleString('en-IN', {
-    minimumFractionDigits: showDecimals ? 2 : 0,
-    maximumFractionDigits: showDecimals ? 2 : 0,
+  const num = Number(value)
+
+  if (Number.isNaN(num)) {
+    return null
+  }
+
+  const hasDecimals = !Number.isInteger(num)
+
+  return num.toLocaleString('en-IN', {
+    minimumFractionDigits: hasDecimals ? 2 : 0,
+    maximumFractionDigits: hasDecimals ? 2 : 0,
   })
 }
 
@@ -34,6 +41,7 @@ function LedgerTable({
   renderRowActions,
   emptyTitle = 'No ledger entries found',
   emptyDescription = 'Try changing filters or add a new entry.',
+  categoryClassByName = {},
 }) {
   const ledgerTableColumns = [
     {
@@ -59,7 +67,7 @@ function LedgerTable({
           </span>
           <span className="font-medium text-[#2b2320]">{value}</span>
           <span
-            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${categoryStyles[row.category] || 'bg-[#f3ece4] text-[#6d6058]'}`}
+            className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${categoryClassByName[row.category] || 'bg-[#f3ece4] text-[#6d6058] border-[#e4d8ca]'}`}
           >
             {row.category}
           </span>
@@ -68,7 +76,7 @@ function LedgerTable({
     },
     {
       label: 'Debit',
-      key: 'withdrawAmount',
+      key: 'debitAmount',
       headerClassName: 'text-right',
       cellClassName: 'text-right font-semibold',
       cell: (value) => renderAmountCell(value, 'negative'),

@@ -10,7 +10,8 @@ const apiEndPoint = {
   users: () => '/users',
   userById: (userId) => `/users/${userId}`,
 
-  transactions: () => '/transactions',
+  transactions: () => '/ledger/transactions',
+  transactionSummary: () => '/ledger/summary',
   transactionById: (transactionId) =>
     `/transactions/${transactionId}`,
 

@@ -22,7 +22,7 @@ function LedgerDetailsModal({
     { label: 'Description', value: entry.description || '—' },
     {
       label: 'Debit Amount',
-      value: entry.withdrawAmount ? formatAmount(entry.withdrawAmount) : '—',
+      value: entry.debitAmount ? formatAmount(entry.debitAmount) : '—',
     },
     {
       label: 'Credit Amount',
@@ -32,6 +32,7 @@ function LedgerDetailsModal({
       label: 'Balance',
       value: entry.balance || entry.balance === 0 ? formatAmount(entry.balance) : '—',
     },
+    { label: 'Note', value: entry.note || '—' },
   ]
 
   return (
