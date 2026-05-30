@@ -16,8 +16,8 @@ const apiEndPoint = {
     `/transactions/${transactionId}`,
 
   categories: () => '/categories',
-  categoryById: (categoryId) =>
-    `/categories/${categoryId}`,
+  categoryById: (categoryId) => `/categories/${categoryId}`,
+  createCategories: () => `/categories/create`,
 
   ledgers: () => '/ledgers',
   ledgerById: (ledgerId) => `/ledgers/${ledgerId}`,

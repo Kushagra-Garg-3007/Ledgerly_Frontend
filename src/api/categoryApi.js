@@ -14,15 +14,15 @@ export const getCategories = async () => {
     const response = await axios.get(apiEndPoint.categories())
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }
 
 export const createCategory = async (payload) => {
   try {
-    const response = await axios.post(apiEndPoint.categories(), payload)
+    const response = await axios.post(apiEndPoint.createCategories(), payload)
     return response.data
   } catch (error) {
-    throw new Error(formatError(error))
+    throw new Error(formatError(error), { cause: error })
   }
 }

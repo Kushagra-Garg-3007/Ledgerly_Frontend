@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Edit2, Plus, Tags, Trash2, X } from 'lucide-react'
-import { getCategories } from '../api/categoryApi'
+import { getCategories, createCategory } from '../api/categoryApi'
 import Button from '../components/common/Button'
 import Card from '../components/common/Card'
 import Input from '../components/common/Input'
 import SkeletonCard from '../components/skeletons/SkeletonCard'
-import { errorToast } from '../utils/toast'
+import { successToast, errorToast } from '../utils/toast'
 import categoryColors from '../constants/categoryColors.js'
 
 function CategoriesPage() {
@@ -16,67 +16,73 @@ function CategoriesPage() {
   const [editingId, setEditingId] = useState(null)
   const [editingName, setEditingName] = useState('')
   const [deletingId, setDeletingId] = useState(null)
+  const [categorySubmitting, setCategorySubmitting] = useState(false)
 
-  const isMiscCategory = (category) =>
-    category?.name?.trim().toLowerCase() === 'misc'
+  const isMiscCategory = (category) => category?.name?.trim().toLowerCase() === 'misc'
+
+  const loadCategories = async () => {
+    setCategoriesLoading(true)
+
+    try {
+      const response = await getCategories()
+      const list = response?.data || response?.categories || response || []
+
+      if (!Array.isArray(list)) {
+        setCategories([])
+        return
+      }
+
+      const mapped = list.map((item, index) => {
+        const countValue = Number(
+          item?.transactionCount ??
+          item?.transaction_count ??
+          item?.count ??
+          item?.transactionsCount ??
+          0
+        )
+
+        return {
+          id: item?.id ?? item?.categoryId ?? `category-${index + 1}`,
+          name: item?.name || item?.categoryName || item?.title || `Category ${index + 1}`,
+          color: item?.color || categoryColors[index % categoryColors.length].value,
+          transactionCount: Number.isFinite(countValue) ? countValue : 0,
+        }
+      })
+
+      setCategories(mapped)
+    } catch (error) {
+      setCategories([])
+      errorToast(error.message)
+    } finally {
+      setCategoriesLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const loadCategories = async () => {
-      setCategoriesLoading(true)
-
-      try {
-        const response = await getCategories()
-        const list = response?.data || response?.categories || response || []
-
-        if (!Array.isArray(list)) {
-          setCategories([])
-          return
-        }
-
-        const mapped = list.map((item, index) => {
-          const countValue = Number(
-            item?.transactionCount ??
-            item?.transaction_count ??
-            item?.count ??
-            item?.transactionsCount ??
-            0
-          )
-
-          return {
-            id: item?.id ?? item?.categoryId ?? `category-${index + 1}`,
-            name: item?.name || item?.categoryName || item?.title || `Category ${index + 1}`,
-            color: item?.color || categoryColors[index % categoryColors.length].value,
-            transactionCount: Number.isFinite(countValue) ? countValue : 0,
-          }
-        })
-
-        setCategories(mapped)
-      } catch (error) {
-        setCategories([])
-        errorToast(error.message)
-      } finally {
-        setCategoriesLoading(false)
-      }
-    }
-
     loadCategories()
   }, [])
 
-  const handleAddCategory = () => {
-    if (!newCategoryName.trim()) return
+  const handleAddCategory = async () => {
+    const name = newCategoryName.trim()
 
-    setCategories([
-      ...categories,
-      {
-        id: `category-${Date.now()}`,
-        name: newCategoryName.trim(),
-        color: categoryColors[categories.length % categoryColors.length].value,
-        transactionCount: 0,
-      },
-    ])
+    if (!name || categorySubmitting) return
 
-    setNewCategoryName('')
-    setIsAddingCategory(false)
+    setCategorySubmitting(true)
+
+    try {
+      await createCategory({ name })
+
+      setNewCategoryName('')
+      setIsAddingCategory(false)
+
+      await loadCategories()
+
+      successToast('Category created successfully.')
+    } catch (error) {
+      errorToast(error.message)
+    } finally {
+      setCategorySubmitting(false)
+    }
   }
 
   const handleEditCategory = (id) => {
@@ -137,7 +143,7 @@ function CategoriesPage() {
 
           <Button
             onClick={() => setIsAddingCategory(true)}
-            disabled={categoriesLoading}
+            disabled={categoriesLoading || categorySubmitting}
             className="rounded-xl px-5"
           >
             <Plus size={16} />
@@ -159,7 +165,7 @@ function CategoriesPage() {
               <div className="flex gap-2">
                 <Button
                   onClick={handleAddCategory}
-                  disabled={!newCategoryName.trim()}
+                  disabled={!newCategoryName.trim() || categorySubmitting}
                   className="rounded-xl px-5"
                 >
                   Save
