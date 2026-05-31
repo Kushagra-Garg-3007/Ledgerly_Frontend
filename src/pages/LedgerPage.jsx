@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BookOpen, Plus } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
 import Button from '../components/common/Button'
 import LedgerTable from '../components/shared/LedgerTable'
 import LedgerSummaryCards from '../components/ledger/LedgerSummaryCards'
@@ -20,7 +20,7 @@ function LedgerPage() {
       <PageBackground />
 
       <section className="mx-auto max-w-7xl">
-        <PageHeader onAddEntry={entryModal.openAdd} />
+        <PageHeader />
 
         <LedgerSummaryCards
           summary={ledger.summary}
@@ -81,10 +81,17 @@ function LedgerPage() {
         errors={entryModal.errors}
         categories={ledger.categoryNames}
         loading={entryModal.submitting}
+        creatingCategory={entryModal.creatingCategory}
         submitError={entryModal.submitError}
+        activeEntry={entryModal.activeEntry}
+        confirmingCategoryUpdate={entryModal.confirmingCategoryUpdate}
         onChange={entryModal.handleChange}
+        onCreateCategory={entryModal.handleCreateCategory}
         onClose={entryModal.close}
         onSubmit={entryModal.handleSubmit}
+        onConfirmSingleRowUpdate={entryModal.handleConfirmSingleRowUpdate}
+        onConfirmMatchingEntityUpdate={entryModal.handleConfirmMatchingEntityUpdate}
+        onCancelCategoryConfirmation={entryModal.handleCancelCategoryConfirmation}
       />
 
       <LedgerDetailsModal
@@ -112,7 +119,7 @@ function PageBackground() {
   )
 }
 
-function PageHeader({ onAddEntry }) {
+function PageHeader() {
   return (
     <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
       <div>

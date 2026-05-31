@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { X } from 'lucide-react'
 import Button from '../common/Button'
 import Input from '../common/Input'
@@ -22,11 +23,20 @@ function LedgerEntryModal({
   errors,
   categories,
   loading,
+  creatingCategory = false,
   submitError,
+  activeEntry,
+  confirmingCategoryUpdate = false,
   onChange,
+  onCreateCategory,
   onClose,
   onSubmit,
+  onConfirmSingleRowUpdate,
+  onConfirmMatchingEntityUpdate,
+  onCancelCategoryConfirmation,
 }) {
+  const [newCategoryName, setNewCategoryName] = useState('')
+
   if (!open) return null
 
   const title = mode === 'edit' ? 'Edit Ledger Entry' : 'Add Ledger Entry'
@@ -79,6 +89,28 @@ function LedgerEntryModal({
             {errors.category ? (
               <p className="mt-2 pl-1 text-xs font-medium text-red-600">{errors.category}</p>
             ) : null}
+
+            <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]">
+              <Input
+                name="ledger-new-category"
+                placeholder="Create new category"
+                value={newCategoryName}
+                onChange={(event) => setNewCategoryName(event.target.value)}
+              />
+
+              <Button
+                variant="outline"
+                className="rounded-xl px-4"
+                loading={creatingCategory}
+                disabled={!newCategoryName.trim() || creatingCategory || loading}
+                onClick={async () => {
+                  await onCreateCategory(newCategoryName)
+                  setNewCategoryName('')
+                }}
+              >
+                Create
+              </Button>
+            </div>
           </div>
 
           <Input
@@ -117,6 +149,63 @@ function LedgerEntryModal({
           </Button>
         </div>
       </div>
+
+      {confirmingCategoryUpdate ? (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1f1814]/35 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-[1.5rem] border border-[#e6dbcf] bg-white p-6 shadow-[0_24px_60px_rgba(28,20,14,0.24)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h4 className="text-xl font-semibold tracking-[-0.03em] text-[#241c17]">
+                  Update Category
+                </h4>
+
+                <p className="mt-3 text-sm leading-6 text-[#66584f]">
+                  Do you want to update the category only for this transaction, or for all transactions with entity '{activeEntry?.entityName || activeEntry?.description}'?
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={onCancelCategoryConfirmation}
+                className="rounded-lg border border-[#e4d8ca] bg-white/80 p-2 text-[#6a5c52]"
+                aria-label="Close category update confirmation"
+                disabled={loading}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              <Button
+                variant="outline"
+                className="rounded-xl px-5"
+                onClick={onCancelCategoryConfirmation}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                variant="outline"
+                className="rounded-xl px-5"
+                onClick={onConfirmSingleRowUpdate}
+                disabled={loading}
+              >
+                Update This Row Only
+              </Button>
+
+              <Button
+                className="rounded-xl px-5"
+                onClick={onConfirmMatchingEntityUpdate}
+                loading={loading}
+                disabled={loading}
+              >
+                Update All Matching Entities
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

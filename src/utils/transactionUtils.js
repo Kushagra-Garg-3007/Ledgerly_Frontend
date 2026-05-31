@@ -23,6 +23,8 @@ export function normalizeTransaction(item) {
     date:          formatDisplayDate(item.date),
     dateValue:     new Date(item.date).getTime(),
     description:   item.entity.name,
+    entityId:      item.entity.id,
+    entityName:    item.entity.name,
     category,
     categoryId:    item.categoryId ?? item.category?.id ?? null,
     note:          item.note,

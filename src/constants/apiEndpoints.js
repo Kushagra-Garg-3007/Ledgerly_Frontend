@@ -12,11 +12,12 @@ const apiEndPoint = {
 
   transactions: () => '/ledger/transactions',
   transactionSummary: () => '/ledger/summary',
-  transactionById: (transactionId) =>
-    `/transactions/${transactionId}`,
+  updateTransactionAnnotation: () => '/ledger/updateTransactionAnnotation',
+  updateTransactionsByEntity: () => '/ledger/updateEntities',
 
   categories: () => '/categories',
-  categoryById: (categoryId) => `/categories/${categoryId}`,
+  updateCategory: (categoryId) => `/categories/${categoryId}`,
+  deleteCategory: (categoryId) => `/categories/${categoryId}`,
   createCategories: () => `/categories/create`,
 
   ledgers: () => '/ledgers',

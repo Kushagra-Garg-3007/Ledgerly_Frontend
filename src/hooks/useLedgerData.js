@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getTransactions, getTransactionSummary } from '../api/transactionApi'
 import { getCategories } from '../api/categoryApi'
 import { errorToast, warningToast } from '../utils/toast'
@@ -50,6 +50,13 @@ export function useLedgerData() {
   const [sortConfig, setSortConfig] = useState(SORT_PRESETS.date_desc)
   const [currentPage, setCurrentPage] = useState(1)
 
+  const refreshCategories = useCallback(async () => {
+    const res = await getCategories()
+    const nextCategories = extractList(res, 'categories').map(normalizeCategory)
+    setCategories(nextCategories)
+    return nextCategories
+  }, [])
+
   // ── Date range debounced so api waits for both dates to be set ────────────
   const dateRangeParams = useMemo(() => ({
     ...(filters.fromDate ? { fromDate: filters.fromDate } : {}),
@@ -72,15 +79,15 @@ export function useLedgerData() {
   // ── Fetch categories (once on mount) ──────────────────────────────────────
   useEffect(() => {
     let alive = true
-    getCategories()
-      .then((res) => {
+    refreshCategories()
+      .then((nextCategories) => {
         if (!alive) return
 
-        setCategories(extractList(res, 'categories').map(normalizeCategory))
+        setCategories(nextCategories)
       })
       .catch((err) => { if (alive) { setCategories([]); warningToast(err.message) } })
     return () => { alive = false }
-  }, [])
+  }, [refreshCategories])
 
   // ── Fetch transactions ────────────────────────────────────────────────────
   useEffect(() => {
@@ -156,6 +163,9 @@ export function useLedgerData() {
   const applyEntryUpdate = (id, patch) =>
     setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)))
 
+  const applyEntityCategoryUpdate = (entityId, patch) =>
+    setEntries((prev) => prev.map((e) => (e.entityId === entityId ? { ...e, ...patch } : e)))
+
   const addCategoryIfNew = (category) =>
     setCategories((prev) => (
       prev.some((item) => item.name === category)
@@ -196,7 +206,9 @@ export function useLedgerData() {
     handleFilterChange,
     handleTableSortChange,
     applyEntryUpdate,
+    applyEntityCategoryUpdate,
     addCategoryIfNew,
+    refreshCategories,
     latestBalance: entries[0]?.balance,
   }
 }

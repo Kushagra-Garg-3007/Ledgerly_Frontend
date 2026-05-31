@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Edit2, Plus, Tags, Trash2, X } from 'lucide-react'
-import { getCategories, createCategory } from '../api/categoryApi'
+import { getCategories, createCategory, updateCategory, deleteCategory, } from '../api/categoryApi'
 import Button from '../components/common/Button'
 import Card from '../components/common/Card'
 import Input from '../components/common/Input'
 import SkeletonCard from '../components/skeletons/SkeletonCard'
-import { successToast, errorToast } from '../utils/toast'
+import { successToast, errorToast, warningToast } from '../utils/toast'
 import categoryColors from '../constants/categoryColors.js'
 
 function CategoriesPage() {
@@ -25,29 +25,18 @@ function CategoriesPage() {
 
     try {
       const response = await getCategories()
-      const list = response?.data || response?.categories || response || []
 
-      if (!Array.isArray(list)) {
+      if (!Array.isArray(response)) {
         setCategories([])
         return
       }
 
-      const mapped = list.map((item, index) => {
-        const countValue = Number(
-          item?.transactionCount ??
-          item?.transaction_count ??
-          item?.count ??
-          item?.transactionsCount ??
-          0
-        )
-
-        return {
-          id: item?.id ?? item?.categoryId ?? `category-${index + 1}`,
-          name: item?.name || item?.categoryName || item?.title || `Category ${index + 1}`,
-          color: item?.color || categoryColors[index % categoryColors.length].value,
-          transactionCount: Number.isFinite(countValue) ? countValue : 0,
-        }
-      })
+      const mapped = response.map((item, index) => ({
+        id: item.id,
+        name: item.name,
+        color: categoryColors[index % categoryColors.length].value,
+        transactionCount: Number(item.items || 0),
+      }))
 
       setCategories(mapped)
     } catch (error) {
@@ -93,27 +82,53 @@ function CategoriesPage() {
     setEditingName(target.name)
   }
 
-  const handleSaveEdit = (id) => {
-    if (!editingName.trim()) return
+  const handleSaveEdit = async (id) => {
+    const name = editingName.trim()
 
-    setCategories(
-      categories.map((item) => (
-        item.id === id
-          ? { ...item, name: editingName.trim() }
-          : item
-      ))
-    )
+    if (!name || categorySubmitting) return
 
-    setEditingId(null)
-    setEditingName('')
+    setCategorySubmitting(true)
+
+    try {
+      await updateCategory(id, { name })
+
+      setEditingId(null)
+      setEditingName('')
+
+      await loadCategories()
+
+      successToast('Category updated successfully.')
+    } catch (error) {
+      errorToast(error.message)
+    } finally {
+      setCategorySubmitting(false)
+    }
   }
 
-  const handleDeleteCategory = (id) => {
-    const target = categories.find((item) => item.id === id)
-    if (!target || isMiscCategory(target)) return
+  const handleDeleteCategory = async (id) => {
+    if (!id || categorySubmitting) return
 
-    setCategories(categories.filter((item) => item.id !== id))
-    setDeletingId(null)
+    const category = categories.find((item) => item.id === id)
+    if (category && category.transactionCount > 0) {
+      warningToast('Please unmap this category from transactions on the Ledger page first, then try deleting.')
+      return
+    }
+
+    setCategorySubmitting(true)
+
+    try {
+      await deleteCategory(id)
+
+      setDeletingId(null)
+
+      await loadCategories()
+
+      successToast('Category deleted successfully.')
+    } catch (error) {
+      errorToast(error.message)
+    } finally {
+      setCategorySubmitting(false)
+    }
   }
 
   return (
@@ -253,6 +268,7 @@ function CategoriesPage() {
                         <Button
                           size="sm"
                           onClick={() => handleSaveEdit(category.id)}
+                          disabled={categorySubmitting}
                           className="flex-1 rounded-lg"
                         >
                           Save
@@ -340,6 +356,7 @@ function CategoriesPage() {
                 variant="danger"
                 className="rounded-xl px-5"
                 onClick={() => handleDeleteCategory(deletingId)}
+                disabled={categorySubmitting}
               >
                 Delete
               </Button>

@@ -40,10 +40,21 @@ export const createTransaction = async (payload) => {
   }
 }
 
-export const updateTransaction = async (transactionId, payload) => {
+export const updateSingleTransaction = async (payload) => {
   try {
-    const response = await axios.put(
-      apiEndPoint.transactionById(transactionId),
+    const response = await axios.post(
+      apiEndPoint.updateTransactionAnnotation(),
+      payload,
+    )
+    return response.data
+  } catch (error) {
+    throw new Error(formatError(error), { cause: error })
+  }
+}
+
+export const updateTransactionsByEntity = async (payload) => {
+  try {
+    const response = await axios.post(apiEndPoint.updateTransactionsByEntity(),
       payload,
     )
     return response.data
