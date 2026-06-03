@@ -1,7 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { BookOpen, User } from 'lucide-react'
 import { useSelector } from 'react-redux'
-import navItems from '../constants/navItems'
+import navItems from '../constants/NavItems'
 import AuthGuard from './auth/AuthGuard'
 import UserMenu from './auth/UserMenu'
 import Button from './common/Button'
