@@ -10,6 +10,9 @@ import SignupPage from './pages/auth/SignupPage'
 import CategoriesPage from './pages/CategoriesPage'
 import ProfilePage from './pages/ProfilePage'
 import LedgerPage from './pages/LedgerPage'
+import AnalyticsPage from './pages/analytics/AnalyticsPage'
+import AnalysisInsightsPage from './pages/AnalysisInsightsPage'
+
 
 function App() {
   return (
@@ -38,6 +41,16 @@ function App() {
             <Route
               path="/ledger"
               element={<LedgerPage />}
+            />
+
+            <Route
+              path="/analysis"
+              element={<AnalyticsPage />}
+            />
+
+            <Route
+              path="/analytics"
+              element={<AnalysisInsightsPage />}
             />
 
             <Route

@@ -1,3 +1,5 @@
+import { fetchAnalysis } from "../api/analysisApi"
+
 const apiEndPoint = {
   health: () => '/health',
 
@@ -6,9 +8,6 @@ const apiEndPoint = {
   authLogout: () => '/auth/logout',
   authRefresh: () => '/auth/refresh',
   authProfile: () => '/auth/profile',
-
-  users: () => '/users',
-  userById: (userId) => `/users/${userId}`,
 
   transactions: () => '/ledger/transactions',
   transactionSummary: () => '/ledger/summary',
@@ -20,13 +19,10 @@ const apiEndPoint = {
   deleteCategory: (categoryId) => `/categories/${categoryId}`,
   createCategories: () => `/categories/create`,
 
-  ledgers: () => '/ledgers',
-  ledgerById: (ledgerId) => `/ledgers/${ledgerId}`,
-
   upload: () => '/uploads/statement',
   recentUploads: () => '/uploads/recent',
-  uploadById: (uploadId) => `/uploads/${uploadId}`,
-  retryUploadById: (uploadId) => `/uploads/${uploadId}/retry`,
+
+  fetchAnalysis: (fromDate, toDate) => `/analysis/?fromDate=${fromDate}&toDate=${toDate}`
 }
 
 export default apiEndPoint

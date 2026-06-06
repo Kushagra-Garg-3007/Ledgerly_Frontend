@@ -12,6 +12,14 @@ export function formatDisplayDate(isoString) {
   })
 }
 
+export function formatAmount(value) {
+  if (value === null || value === undefined || isNaN(value)) {
+    return '0'
+  }[]
+
+  return Number(value).toLocaleString('en-IN')
+}
+
 export function normalizeTransaction(item) {
   const category =
     typeof item.category === 'object' && item.category !== null
