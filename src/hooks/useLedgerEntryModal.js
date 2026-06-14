@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createCategory } from '../api/categoryApi'
 import {
   updateSingleTransaction,
-  updateTransactionsByEntity,
+  updateTransactionsByEntity
 } from '../api/transactionApi'
 import { errorToast, successToast, warningToast } from '../utils/toast'
 
@@ -19,7 +19,7 @@ export function useLedgerEntryModal({
   applyEntryUpdate,
   applyEntityCategoryUpdate,
   addCategoryIfNew,
-  refreshCategories,
+  refreshCategories
 }) {
   const [open, setOpen] = useState(false)
   const [activeEntry, setActiveEntry] = useState(null)
@@ -29,7 +29,8 @@ export function useLedgerEntryModal({
   const [submitting, setSubmitting] = useState(false)
   const [creatingCategory, setCreatingCategory] = useState(false)
   const [submitError, setSubmitError] = useState('')
-  const [confirmingCategoryUpdate, setConfirmingCategoryUpdate] = useState(false)
+  const [confirmingCategoryUpdate, setConfirmingCategoryUpdate] =
+    useState(false)
 
   const openEdit = (entry) => {
     setActiveEntry(entry)
@@ -65,14 +66,14 @@ export function useLedgerEntryModal({
   }
 
   const selectedCategory = categories.find(
-    (category) => category.name === form.category,
+    (category) => category.name === form.category
   )
 
   const buildPayload = () => ({
     entityId: toPayloadId(activeEntry?.entityId),
     categoryId: toPayloadId(selectedCategory?.id ?? activeEntry?.categoryId),
     rawTransactionId: toPayloadId(activeEntryId),
-    note: form.notes.trim() || null,
+    note: form.notes.trim() || null
   })
 
   const submitSingleRowUpdate = async () => {
@@ -84,7 +85,7 @@ export function useLedgerEntryModal({
     applyEntryUpdate(activeEntryId, {
       category: form.category,
       categoryId: selectedCategory?.id ?? activeEntry?.categoryId,
-      note: form.notes.trim() || null,
+      note: form.notes.trim() || null
     })
 
     try {
@@ -110,7 +111,7 @@ export function useLedgerEntryModal({
 
     applyEntityCategoryUpdate(activeEntry?.entityId, {
       category: form.category,
-      categoryId: selectedCategory?.id ?? activeEntry?.categoryId,
+      categoryId: selectedCategory?.id ?? activeEntry?.categoryId
     })
 
     try {
@@ -150,7 +151,7 @@ export function useLedgerEntryModal({
       await createCategory({ name: trimmedName })
       const refreshedCategories = await refreshCategories()
       const createdCategory = refreshedCategories.find(
-        (category) => category.name.toLowerCase() === trimmedName.toLowerCase(),
+        (category) => category.name.toLowerCase() === trimmedName.toLowerCase()
       )
 
       handleChange('category', createdCategory?.name || trimmedName)
@@ -184,6 +185,6 @@ export function useLedgerEntryModal({
     handleCreateCategory,
     handleConfirmSingleRowUpdate: submitSingleRowUpdate,
     handleConfirmMatchingEntityUpdate: submitMatchingEntityUpdate,
-    handleCancelCategoryConfirmation,
+    handleCancelCategoryConfirmation
   }
 }

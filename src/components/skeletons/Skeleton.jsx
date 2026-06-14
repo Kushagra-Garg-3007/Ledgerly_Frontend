@@ -1,7 +1,4 @@
-function Skeleton({
-  className = '',
-  rounded = 'rounded-lg',
-}) {
+function Skeleton({ className = '', rounded = 'rounded-lg' }) {
   return (
     <div
       className={`
@@ -36,4 +33,3 @@ function Skeleton({
   )
 }
 export default Skeleton
-

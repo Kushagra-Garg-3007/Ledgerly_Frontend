@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Edit2, Plus, Tags, Trash2, X } from 'lucide-react'
-import { getCategories, createCategory, updateCategory, deleteCategory, } from '../api/categoryApi'
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory
+} from '../api/categoryApi'
 import Button from '../components/common/Button'
 import Card from '../components/common/Card'
 import Input from '../components/common/Input'
@@ -18,7 +23,8 @@ function CategoriesPage() {
   const [deletingId, setDeletingId] = useState(null)
   const [categorySubmitting, setCategorySubmitting] = useState(false)
 
-  const isMiscCategory = (category) => category?.name?.trim().toLowerCase() === 'misc'
+  const isMiscCategory = (category) =>
+    category?.name?.trim().toLowerCase() === 'misc'
 
   const loadCategories = async () => {
     setCategoriesLoading(true)
@@ -35,7 +41,7 @@ function CategoriesPage() {
         id: item.id,
         name: item.name,
         color: categoryColors[index % categoryColors.length].value,
-        transactionCount: Number(item.items || 0),
+        transactionCount: Number(item.items || 0)
       }))
 
       setCategories(mapped)
@@ -110,7 +116,9 @@ function CategoriesPage() {
 
     const category = categories.find((item) => item.id === id)
     if (category && category.transactionCount > 0) {
-      warningToast('Please unmap this category from transactions on the Ledger page first, then try deleting.')
+      warningToast(
+        'Please unmap this category from transactions on the Ledger page first, then try deleting.'
+      )
       return
     }
 
@@ -152,7 +160,8 @@ function CategoriesPage() {
             </h1>
 
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#6a5d55] sm:text-base">
-              Create and organize transaction categories to keep your ledger clean and searchable.
+              Create and organize transaction categories to keep your ledger
+              clean and searchable.
             </p>
           </div>
 
@@ -198,14 +207,17 @@ function CategoriesPage() {
                 </Button>
               </div>
             </div>
-
           </Card>
         )}
 
         {categoriesLoading ? (
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, index) => (
-              <SkeletonCard key={index} className="rounded-[1.4rem]" lines={2} />
+              <SkeletonCard
+                key={index}
+                className="rounded-[1.4rem]"
+                lines={2}
+              />
             ))}
           </section>
         ) : categories.length === 0 ? (
@@ -228,7 +240,9 @@ function CategoriesPage() {
                   className="group rounded-[1.4rem] border-[#e4d8cb] bg-white/75 p-5"
                 >
                   <div className="mb-4 flex items-start justify-between gap-3">
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl border font-semibold ${category.color}`}>
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center rounded-xl border font-semibold ${category.color}`}
+                    >
                       {category.name[0]}
                     </div>
 
@@ -302,7 +316,8 @@ function CategoriesPage() {
                       </div>
 
                       <p className="mt-2 text-sm text-[#72645a]">
-                        {category.transactionCount} transaction{category.transactionCount !== 1 ? 's' : ''}
+                        {category.transactionCount} transaction
+                        {category.transactionCount !== 1 ? 's' : ''}
                       </p>
                     </div>
                   )}
@@ -339,7 +354,8 @@ function CategoriesPage() {
 
             <div className="mt-5 rounded-xl border border-[#e7dbce] bg-white/75 px-4 py-3 text-sm text-[#5d5047]">
               <p className="font-semibold text-[#3b3028]">
-                {categories.find((item) => item.id === deletingId)?.name || 'Selected category'}
+                {categories.find((item) => item.id === deletingId)?.name ||
+                  'Selected category'}
               </p>
             </div>
 

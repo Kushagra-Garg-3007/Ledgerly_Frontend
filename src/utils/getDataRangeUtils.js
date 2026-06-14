@@ -43,11 +43,7 @@ function getBaseDateRange(period, customRange) {
       const end = new Date(today.getFullYear(), today.getMonth(), 0)
 
       return {
-        start: new Date(
-          end.getFullYear() - 1,
-          end.getMonth() + 1,
-          1
-        ),
+        start: new Date(end.getFullYear() - 1, end.getMonth() + 1, 1),
         end
       }
     }
@@ -80,8 +76,7 @@ export function getDateRange(period, customRange) {
 }
 
 export function getInsightDateRange(period, customRange) {
-
-  if(period === 'custom'){
+  if (period === 'custom') {
     return {
       previousPeriodStartDate: customRange.previousPeriodStartDate,
       previousPeriodEndDate: customRange.previousPeriodEndDate,

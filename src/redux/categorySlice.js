@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   items: [],
   loading: false,
-  error: null,
+  error: null
 }
 
 const categorySlice = createSlice({
@@ -27,8 +27,8 @@ const categorySlice = createSlice({
     clearCategoryState: (state) => {
       state.loading = false
       state.error = null
-    },
-  },
+    }
+  }
 })
 
 export const {
@@ -36,7 +36,7 @@ export const {
   setCategories,
   addCategory,
   setCategoryError,
-  clearCategoryState,
+  clearCategoryState
 } = categorySlice.actions
 
 export default categorySlice.reducer

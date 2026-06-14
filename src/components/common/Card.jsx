@@ -1,10 +1,4 @@
-function Card({
-  title,
-  subtitle,
-  children,
-  className = '',
-  align = 'left',
-}) {
+function Card({ title, subtitle, children, className = '', align = 'left' }) {
   const isCenter = align === 'center'
 
   return (
@@ -78,9 +72,7 @@ function Card({
           </p>
         )}
 
-        <div className="mt-6">
-          {children}
-        </div>
+        <div className="mt-6">{children}</div>
       </div>
     </section>
   )

@@ -1,31 +1,26 @@
-import {
-  BookOpen,
-  BarChart3,
-  Upload,
-  Tags,
-} from 'lucide-react'
+import { BookOpen, BarChart3, Upload, Tags } from 'lucide-react'
 
 const navItems = [
   {
     label: 'Ledger',
     to: '/ledger',
-    icon: BookOpen,
+    icon: BookOpen
   },
   {
     label: 'Analysis',
     to: '/analysis',
-    icon: BarChart3,
+    icon: BarChart3
   },
   {
     label: 'Upload',
     to: '/upload',
-    icon: Upload,
+    icon: Upload
   },
   {
     label: 'Categories',
     to: '/categories',
-    icon: Tags,
-  },
+    icon: Tags
+  }
 ]
 
 export default navItems

@@ -1,9 +1,6 @@
 import Skeleton from './Skeleton'
 
-function SkeletonSurface({
-  children,
-  className = '',
-}) {
+function SkeletonSurface({ children, className = '' }) {
   return (
     <div
       className={`
@@ -23,9 +20,7 @@ function SkeletonSurface({
   )
 }
 
-export default function SkeletonTable({
-  rows = 5,
-}) {
+export default function SkeletonTable({ rows = 5 }) {
   return (
     <SkeletonSurface className="p-5">
       <div className="flex items-center justify-between">
@@ -41,11 +36,10 @@ export default function SkeletonTable({
           <Skeleton className="ml-auto h-3 w-10" />
         </div>
 
-        {Array.from({ length: rows }).map(
-          (_, index) => (
-            <div
-              key={index}
-              className="
+        {Array.from({ length: rows }).map((_, index) => (
+          <div
+            key={index}
+            className="
                 rounded-xl
 
                 border border-[#e4d9ce]/70
@@ -56,16 +50,15 @@ export default function SkeletonTable({
 
                 shadow-[0_1px_3px_rgba(40,28,20,0.03)]
               "
-            >
-              <div className="grid grid-cols-4 gap-3">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="ml-auto h-4 w-10" />
-              </div>
+          >
+            <div className="grid grid-cols-4 gap-3">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="ml-auto h-4 w-10" />
             </div>
-          ),
-        )}
+          </div>
+        ))}
       </div>
     </SkeletonSurface>
   )

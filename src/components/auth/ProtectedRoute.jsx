@@ -8,13 +8,7 @@ function ProtectedRoute() {
   if (!initialized) return null
 
   if (!isAuthenticated) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{ from: location }}
-      />
-    )
+    return <Navigate to="/login" replace state={{ from: location }} />
   }
 
   return <Outlet />

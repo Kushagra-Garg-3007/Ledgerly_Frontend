@@ -1,9 +1,6 @@
 import Skeleton from './Skeleton'
 
-function SkeletonSurface({
-  children,
-  className = '',
-}) {
+function SkeletonSurface({ children, className = '' }) {
   return (
     <div
       className={`
@@ -29,45 +26,31 @@ function SkeletonCard({
   image = false,
   lines = 3,
   action = false,
-  className = '',
+  className = ''
 }) {
   return (
-    <SkeletonSurface
-      className={`p-6 ${className}`}
-    >
+    <SkeletonSurface className={`p-6 ${className}`}>
       {/* Header */}
-      {title && (
-        <Skeleton className="h-5 w-32 rounded-md" />
-      )}
+      {title && <Skeleton className="h-5 w-32 rounded-md" />}
 
-      {subtitle && (
-        <Skeleton className="mt-3 h-3.5 w-2/3 rounded-full" />
-      )}
+      {subtitle && <Skeleton className="mt-3 h-3.5 w-2/3 rounded-full" />}
 
       {/* Content */}
       <div className="mt-6 space-y-3">
-        {Array.from({ length: lines }).map(
-          (_, index) => (
-            <Skeleton
-              key={index}
-              className={`
+        {Array.from({ length: lines }).map((_, index) => (
+          <Skeleton
+            key={index}
+            className={`
                 h-4 rounded-full
 
-                ${
-                  index === lines - 1
-                    ? 'w-[78%]'
-                    : 'w-full'
-                }
+                ${index === lines - 1 ? 'w-[78%]' : 'w-full'}
               `}
-            />
-          ),
-        )}
+          />
+        ))}
       </div>
 
       {/* Optional media/chart block */}
-      {image && (
-        <Skeleton className="mt-6 h-32 w-full rounded-xl" />
-      )}
+      {image && <Skeleton className="mt-6 h-32 w-full rounded-xl" />}
 
       {/* Optional button */}
       {action && (

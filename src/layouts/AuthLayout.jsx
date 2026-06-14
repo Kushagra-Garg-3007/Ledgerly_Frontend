@@ -7,7 +7,7 @@ function AuthLayout({
   children,
   footerText,
   footerLinkText,
-  footerTo,
+  footerTo
 }) {
   return (
     <main
@@ -90,8 +90,8 @@ function AuthLayout({
                   text-[#6f6258]
                 "
               >
-                Experience a calm and focused financial workspace designed
-                for modern teams, faster operations, and clean transaction
+                Experience a calm and focused financial workspace designed for
+                modern teams, faster operations, and clean transaction
                 management.
               </p>
 
@@ -146,7 +146,7 @@ function AuthLayout({
               "
               title={title}
               subtitle={subtitle}
-              align='center'
+              align="center"
             >
               <div className="space-y-6">
                 {children}

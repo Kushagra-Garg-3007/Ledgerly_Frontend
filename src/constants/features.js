@@ -4,7 +4,7 @@ const features = [
   'CSV & PDF Uploads',
   'Smart Search',
   'Fast Filtering',
-  'Privacy First',
+  'Privacy First'
 ]
 
-export default features;
+export default features

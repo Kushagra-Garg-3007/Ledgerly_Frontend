@@ -4,15 +4,11 @@ import Button from '../common/Button'
 function formatAmount(value = 0) {
   return `₹${Number(value || 0).toLocaleString('en-IN', {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 2
   })}`
 }
 
-function LedgerDetailsModal({
-  entry,
-  open,
-  onClose,
-}) {
+function LedgerDetailsModal({ entry, open, onClose }) {
   if (!open || !entry) return null
 
   const fields = [
@@ -22,17 +18,18 @@ function LedgerDetailsModal({
     { label: 'Description', value: entry.description || '—' },
     {
       label: 'Debit Amount',
-      value: entry.debitAmount ? formatAmount(entry.debitAmount) : '—',
+      value: entry.debitAmount ? formatAmount(entry.debitAmount) : '—'
     },
     {
       label: 'Credit Amount',
-      value: entry.creditAmount ? formatAmount(entry.creditAmount) : '—',
+      value: entry.creditAmount ? formatAmount(entry.creditAmount) : '—'
     },
     {
       label: 'Balance',
-      value: entry.balance || entry.balance === 0 ? formatAmount(entry.balance) : '—',
+      value:
+        entry.balance || entry.balance === 0 ? formatAmount(entry.balance) : '—'
     },
-    { label: 'Note', value: entry.note || '—' },
+    { label: 'Note', value: entry.note || '—' }
   ]
 
   return (

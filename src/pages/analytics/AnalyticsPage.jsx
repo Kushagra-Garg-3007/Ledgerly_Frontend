@@ -44,11 +44,7 @@ function AnalyticsPage() {
           </div>
         </div>
 
-        {activeTab === 'analysis' ? (
-          <AnalysisTab />
-        ) : (
-          <InsightsTab />
-        )}
+        {activeTab === 'analysis' ? <AnalysisTab /> : <InsightsTab />}
       </section>
     </div>
   )

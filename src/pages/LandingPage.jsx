@@ -1,4 +1,16 @@
-import { ArrowRight, BadgeCheck, BookOpen, Filter, Search, ShieldCheck, Upload, Wallet, Sparkles, TrendingUp, FileUp } from 'lucide-react'
+import {
+  ArrowRight,
+  BadgeCheck,
+  BookOpen,
+  Filter,
+  Search,
+  ShieldCheck,
+  Upload,
+  Wallet,
+  Sparkles,
+  TrendingUp,
+  FileUp
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import AuthGuard from '../components/auth/AuthGuard'
 import Button from '../components/common/Button'
@@ -29,7 +41,6 @@ function LandingPage() {
 
       <section className="flex min-h-[88vh] flex-col items-center justify-center text-center">
         <div className="max-w-5xl">
-
           <h1 className="mx-auto mt-1 max-w-5xl font-heading text-5xl font-bold leading-[0.95] tracking-[-0.06em] text-[#1e1814] sm:text-6xl lg:text-7xl">
             Your bank statement,
           </h1>
@@ -56,7 +67,11 @@ function LandingPage() {
 
             <AuthGuard>
               <Link to="/ledger">
-                <Button variant="outline" size="lg" className="rounded-2xl px-6">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="rounded-2xl px-6"
+                >
                   <BookOpen size={18} />
                   View Ledger
                   <ArrowRight size={16} />
@@ -307,7 +322,6 @@ function LandingPage() {
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-
               <AuthGuard>
                 <Link to="/upload">
                   <Button size="lg" className="rounded-xl px-6">
@@ -318,7 +332,11 @@ function LandingPage() {
 
               <AuthGuard>
                 <Link to="/ledger">
-                  <Button variant="outline" size="lg" className="rounded-xl px-6">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="rounded-xl px-6"
+                  >
                     Explore Ledger
                   </Button>
                 </Link>

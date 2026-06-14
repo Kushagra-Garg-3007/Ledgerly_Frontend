@@ -27,7 +27,7 @@ function SignupPage() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting }
   } = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -35,8 +35,8 @@ function SignupPage() {
       email: '',
       password: '',
       confirmPassword: '',
-      acceptTerms: false,
-    },
+      acceptTerms: false
+    }
   })
 
   const passwordValue = watch('password')
@@ -49,12 +49,10 @@ function SignupPage() {
       await registerUser({
         name: values.fullName,
         email: values.email,
-        password: values.password,
+        password: values.password
       })
 
-      successToast(
-        'Account created successfully. Please log in.',
-      )
+      successToast('Account created successfully. Please log in.')
 
       navigate('/login')
     } catch (error) {
@@ -72,11 +70,7 @@ function SignupPage() {
       footerLinkText="Sign in"
       footerTo="/login"
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        noValidate
-        className="space-y-5"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
         {/* Full Name */}
         <Input
           label="Full name"
@@ -84,10 +78,7 @@ function SignupPage() {
           autoComplete="name"
           placeholder="Enter your full name"
           error={errors.fullName?.message}
-          {...register(
-            'fullName',
-            authValidationRules.fullName,
-          )}
+          {...register('fullName', authValidationRules.fullName)}
         />
 
         {/* Email */}
@@ -98,10 +89,7 @@ function SignupPage() {
           autoComplete="email"
           placeholder="name@company.com"
           error={errors.email?.message}
-          {...register(
-            'email',
-            authValidationRules.email,
-          )}
+          {...register('email', authValidationRules.email)}
         />
 
         {/* Password */}
@@ -122,12 +110,10 @@ function SignupPage() {
               placeholder="Create a strong password"
               className="pr-12"
               error={errors.password?.message}
-              rightElement={(
+              rightElement={
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword((prev) => !prev)
-                  }
+                  onClick={() => setShowPassword((prev) => !prev)}
                   className="
                     flex h-8 w-8
                     items-center justify-center
@@ -141,11 +127,7 @@ function SignupPage() {
                     hover:bg-[#efe4d8]
                     hover:text-[#5f5047]
                   "
-                  aria-label={
-                    showPassword
-                      ? 'Hide password'
-                      : 'Show password'
-                  }
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
                     <Eye size={18} strokeWidth={2} />
@@ -153,11 +135,8 @@ function SignupPage() {
                     <EyeOff size={18} strokeWidth={2} />
                   )}
                 </button>
-              )}
-              {...register(
-                'password',
-                authValidationRules.password,
-              )}
+              }
+              {...register('password', authValidationRules.password)}
             />
           </div>
 
@@ -183,9 +162,8 @@ function SignupPage() {
   shadow-[0_1px_2px_rgba(40,28,20,0.03)]
 "
             >
-              Password should contain at least
-              8 characters, one uppercase letter,
-              one lowercase letter, and one number.
+              Password should contain at least 8 characters, one uppercase
+              letter, one lowercase letter, and one number.
             </div>
           )}
         </div>
@@ -194,25 +172,15 @@ function SignupPage() {
         <Input
           label="Confirm password"
           name="confirmPassword"
-          type={
-            showConfirmPassword
-              ? 'text'
-              : 'password'
-          }
+          type={showConfirmPassword ? 'text' : 'password'}
           autoComplete="new-password"
           placeholder="Re-enter your password"
           className="pr-12"
-          error={
-            errors.confirmPassword?.message
-          }
-          rightElement={(
+          error={errors.confirmPassword?.message}
+          rightElement={
             <button
               type="button"
-              onClick={() =>
-                setShowConfirmPassword(
-                  (prev) => !prev,
-                )
-              }
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
               className="
                 flex h-8 w-8
                 items-center justify-center
@@ -233,28 +201,17 @@ function SignupPage() {
               }
             >
               {showConfirmPassword ? (
-                <Eye
-                  size={18}
-                  strokeWidth={2}
-                />
+                <Eye size={18} strokeWidth={2} />
               ) : (
-                <EyeOff
-                  size={18}
-                  strokeWidth={2}
-                />
+                <EyeOff size={18} strokeWidth={2} />
               )}
             </button>
-          )}
-          {...register(
-            'confirmPassword',
-            {
-              required:
-                'Please confirm your password',
-              validate: (value) =>
-                value === passwordValue ||
-                'Passwords do not match',
-            },
-          )}
+          }
+          {...register('confirmPassword', {
+            required: 'Please confirm your password',
+            validate: (value) =>
+              value === passwordValue || 'Passwords do not match'
+          })}
         />
 
         {/* Terms */}
@@ -281,33 +238,24 @@ function SignupPage() {
               focus:ring-[#d9c2ad]/55
             "
             {...register('acceptTerms', {
-              required:
-                'You must accept terms and conditions',
+              required: 'You must accept terms and conditions'
             })}
           />
 
-          <span>
-            I agree to the terms and conditions.
-          </span>
+          <span>I agree to the terms and conditions.</span>
         </label>
 
         {errors.acceptTerms?.message && (
           <p className="text-xs font-medium text-red-600">
-            {
-              errors.acceptTerms.message
-            }
+            {errors.acceptTerms.message}
           </p>
         )}
 
         {/* Submit */}
         <Button
           type="submit"
-          loading={
-            loading || isSubmitting
-          }
-          disabled={
-            loading || isSubmitting
-          }
+          loading={loading || isSubmitting}
+          disabled={loading || isSubmitting}
           fullWidth
         >
           Create account

@@ -14,11 +14,7 @@ const controlClassName = `
   focus:border-[#b79d89] focus:bg-[#faf7f2] focus:ring-2 focus:ring-[#d8c0aa]/30
 `
 
-function LedgerFilters({
-  filters,
-  categories,
-  onFilterChange,
-}) {
+function LedgerFilters({ filters, categories, onFilterChange }) {
   return (
     <section className="rounded-[1.5rem] border border-[#e4d8cb] bg-white/76 p-5 shadow-[0_12px_30px_rgba(40,28,20,0.06)] backdrop-blur-xl">
       <div className="grid gap-4 lg:grid-cols-12">

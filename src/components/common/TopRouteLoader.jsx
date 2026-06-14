@@ -4,8 +4,7 @@ import { useLocation } from 'react-router-dom'
 function TopRouteLoader() {
   const location = useLocation()
 
-  const [visible, setVisible] =
-    useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     setVisible(true)
@@ -15,11 +14,7 @@ function TopRouteLoader() {
     }, 650)
 
     return () => clearTimeout(timeout)
-  }, [
-    location.pathname,
-    location.search,
-    location.hash,
-  ])
+  }, [location.pathname, location.search, location.hash])
 
   return (
     <div
@@ -35,11 +30,7 @@ function TopRouteLoader() {
 
         transition-opacity duration-300
 
-        ${
-          visible
-            ? 'opacity-100'
-            : 'opacity-0'
-        }
+        ${visible ? 'opacity-100' : 'opacity-0'}
       `}
       aria-hidden="true"
     >

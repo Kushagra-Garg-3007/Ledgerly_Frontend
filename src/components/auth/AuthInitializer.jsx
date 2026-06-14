@@ -20,10 +20,7 @@ function AuthInitializer() {
 
     getProfile()
       .then((profileData) => {
-        const userData =
-          profileData?.data ||
-          profileData?.user ||
-          null
+        const userData = profileData?.data || profileData?.user || null
 
         if (userData) {
           dispatch(setUser(userData))

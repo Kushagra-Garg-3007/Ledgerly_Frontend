@@ -47,13 +47,13 @@ const variantClasses = {
     hover:via-[#fdfcf9]
     hover:to-[#f0e8df]
     hover:shadow-[0_6px_14px_rgba(40,28,20,0.11)]
-  `,
+  `
 }
 
 const sizeClasses = {
   sm: 'px-3 py-1.5 text-xs',
   md: 'px-5 py-2.5 text-sm',
-  lg: 'px-6 py-3 text-base',
+  lg: 'px-6 py-3 text-base'
 }
 
 function Button({
@@ -111,13 +111,14 @@ function Button({
           h-[42%]
           rounded-t-[inherit]
           bg-gradient-to-b
-          ${variant === 'primary'
-            ? 'from-white/[0.10] to-transparent'
-            : variant === 'secondary'
-              ? 'from-white/[0.18] to-transparent'
-              : variant === 'danger'
-                ? 'from-white/[0.12] to-transparent'
-                : 'from-white/[0.30] to-transparent'
+          ${
+            variant === 'primary'
+              ? 'from-white/[0.10] to-transparent'
+              : variant === 'secondary'
+                ? 'from-white/[0.18] to-transparent'
+                : variant === 'danger'
+                  ? 'from-white/[0.12] to-transparent'
+                  : 'from-white/[0.30] to-transparent'
           }
         `}
       />

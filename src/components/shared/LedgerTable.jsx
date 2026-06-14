@@ -16,7 +16,7 @@ const formatAmount = (value) => {
 
   return num.toLocaleString('en-IN', {
     minimumFractionDigits: hasDecimals ? 2 : 0,
-    maximumFractionDigits: hasDecimals ? 2 : 0,
+    maximumFractionDigits: hasDecimals ? 2 : 0
   })
 }
 
@@ -24,7 +24,15 @@ const renderAmountCell = (value, tone = 'neutral') => {
   const formattedValue = formatAmount(value)
 
   return formattedValue ? (
-    <span className={tone === 'positive' ? 'text-emerald-700' : tone === 'negative' ? 'text-rose-700' : ''}>
+    <span
+      className={
+        tone === 'positive'
+          ? 'text-emerald-700'
+          : tone === 'negative'
+            ? 'text-rose-700'
+            : ''
+      }
+    >
       {formattedValue}
     </span>
   ) : (
@@ -41,7 +49,7 @@ function LedgerTable({
   renderRowActions,
   emptyTitle = 'No ledger entries found',
   emptyDescription = 'Try changing filters or add a new entry.',
-  categoryClassByName = {},
+  categoryClassByName = {}
 }) {
   const ledgerTableColumns = [
     {
@@ -52,7 +60,7 @@ function LedgerTable({
       activeSortKey: sortKey,
       sortDirection,
       onSortChange,
-      cellClassName: 'text-[#6a5d55]',
+      cellClassName: 'text-[#6a5d55]'
     },
     {
       label: 'Description',
@@ -72,21 +80,21 @@ function LedgerTable({
             {row.category}
           </span>
         </div>
-      ),
+      )
     },
     {
       label: 'Debit',
       key: 'debitAmount',
       headerClassName: 'text-right',
       cellClassName: 'text-right font-semibold',
-      cell: (value) => renderAmountCell(value, 'negative'),
+      cell: (value) => renderAmountCell(value, 'negative')
     },
     {
       label: 'Credit',
       key: 'creditAmount',
       headerClassName: 'text-right',
       cellClassName: 'text-right font-semibold',
-      cell: (value) => renderAmountCell(value, 'positive'),
+      cell: (value) => renderAmountCell(value, 'positive')
     },
     {
       label: 'Balance',
@@ -101,8 +109,8 @@ function LedgerTable({
         ) : (
           <div className="text-center text-[#b8aca2]">—</div>
         )
-      },
-    },
+      }
+    }
   ]
 
   if (renderRowActions) {
@@ -111,7 +119,7 @@ function LedgerTable({
       key: 'actions',
       headerClassName: 'text-right',
       cellClassName: 'text-right',
-      cell: (_, row) => renderRowActions(row),
+      cell: (_, row) => renderRowActions(row)
     })
   }
 

@@ -1,4 +1,4 @@
-import { fetchAnalysis } from "../api/analysisApi"
+import { fetchAnalysis } from '../api/analysisApi'
 
 const apiEndPoint = {
   health: () => '/health',
@@ -22,8 +22,14 @@ const apiEndPoint = {
   upload: () => '/uploads/statement',
   recentUploads: () => '/uploads/recent',
 
-  fetchAnalysis: (fromDate, toDate) => `/analysis/?fromDate=${fromDate}&toDate=${toDate}`,
-  fetchInsights: (previousPeriodStartDate, previousPeriodEndDate, currentPeriodStartDate, currentPeriodEndDate) => {
+  fetchAnalysis: (fromDate, toDate) =>
+    `/analysis/?fromDate=${fromDate}&toDate=${toDate}`,
+  fetchInsights: (
+    previousPeriodStartDate,
+    previousPeriodEndDate,
+    currentPeriodStartDate,
+    currentPeriodEndDate
+  ) => {
     return `/analysis/insights/?previousPeriodStartDate=${previousPeriodStartDate}&previousPeriodEndDate=${previousPeriodEndDate}&currentPeriodStartDate=${currentPeriodStartDate}&currentPeriodEndDate=${currentPeriodEndDate}`
   }
 }

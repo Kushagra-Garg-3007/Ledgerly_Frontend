@@ -24,9 +24,7 @@ function ProfilePage() {
             {displayName}
           </h1>
           {email ? (
-            <p className="mt-2 text-sm text-[#6a5d55]">
-              {email}
-            </p>
+            <p className="mt-2 text-sm text-[#6a5d55]">{email}</p>
           ) : null}
         </div>
 

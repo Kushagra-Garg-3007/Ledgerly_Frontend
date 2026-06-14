@@ -9,7 +9,7 @@ const transactions = [
     debitAmount: 200,
     creditAmount: '',
     balance: 8315.25,
-    note: null,
+    note: null
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const transactions = [
     debitAmount: 420,
     creditAmount: '',
     balance: 8515.25,
-    note: null,
+    note: null
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ const transactions = [
     debitAmount: 610,
     creditAmount: '',
     balance: 8935.25,
-    note: null,
+    note: null
   },
   {
     id: 4,
@@ -45,7 +45,7 @@ const transactions = [
     debitAmount: '',
     creditAmount: 562,
     balance: 9545.25,
-    note: null,
+    note: null
   },
   {
     id: 5,
@@ -57,8 +57,8 @@ const transactions = [
     debitAmount: '',
     creditAmount: 95000,
     balance: 10194.25,
-    note: null,
-  },
+    note: null
+  }
 ]
 
-export default transactions;
+export default transactions

@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Eye, MoreHorizontal, Pencil } from 'lucide-react'
 
-function LedgerRowActions({
-  onViewDetails,
-  onEditEntry,
-}) {
+function LedgerRowActions({ onViewDetails, onEditEntry }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 
@@ -51,9 +48,11 @@ function LedgerRowActions({
           absolute right-0 top-9 z-20 w-44 origin-top-right rounded-xl border border-[#e7ddd2]
           bg-white/90 shadow-[0_14px_35px_rgba(40,28,20,0.14)] backdrop-blur-xl
           transition-all duration-150 ease-out
-          ${open
-            ? 'pointer-events-auto scale-100 opacity-100'
-            : 'pointer-events-none scale-[0.98] opacity-0'}
+          ${
+            open
+              ? 'pointer-events-auto scale-100 opacity-100'
+              : 'pointer-events-none scale-[0.98] opacity-0'
+          }
         `}
         role="menu"
         aria-hidden={!open}

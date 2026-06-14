@@ -1,12 +1,18 @@
-import { useState, useEffect } from 'react';
-import {CircleDollarSign, ReceiptText, Wallet, PieChart, CalendarDays} from 'lucide-react'
-import { formatAmount } from '../../utils/transactionUtils';
-import EmptyState from '../../components/common/EmptyState';
-import DountChart from '../../components/common/DonutChart';
-import { getDateRange } from '../../utils/getDataRangeUtils';
-import { errorToast } from '../../utils/toast';
-import SkeletonPage from '../../components/skeletons/SkeletonPage';
-import { fetchAnalysis } from '../../api/analysisApi';
+import { useState, useEffect } from 'react'
+import {
+  CircleDollarSign,
+  ReceiptText,
+  Wallet,
+  PieChart,
+  CalendarDays
+} from 'lucide-react'
+import { formatAmount } from '../../utils/transactionUtils'
+import EmptyState from '../../components/common/EmptyState'
+import DountChart from '../../components/common/DonutChart'
+import { getDateRange } from '../../utils/getDataRangeUtils'
+import { errorToast } from '../../utils/toast'
+import SkeletonPage from '../../components/skeletons/SkeletonPage'
+import { fetchAnalysis } from '../../api/analysisApi'
 
 const QUICK_RANGES = [
   { label: 'Current Month', value: 'current_month' },
@@ -14,16 +20,16 @@ const QUICK_RANGES = [
   { label: 'Last 3 Months', value: 'last_3_months' },
   { label: 'Last 6 Months', value: 'last_6_months' },
   { label: 'Last Year', value: 'last_year' },
-  { label: 'Custom', value: 'custom' },
+  { label: 'Custom', value: 'custom' }
 ]
 
 function AnalysisTab() {
-  const [period, setPeriod] = useState('current_month');
+  const [period, setPeriod] = useState('current_month')
 
   const [customRange, setCustomRange] = useState({
     fromDate: '',
     toDate: ''
-  });
+  })
 
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -31,12 +37,9 @@ function AnalysisTab() {
   function isValidCustomRange(period, customRange) {
     if (period !== 'custom') return true
 
-    return (
-      customRange.fromDate?.trim() &&
-      customRange.toDate?.trim()
-    )
+    return customRange.fromDate?.trim() && customRange.toDate?.trim()
   }
-  
+
   useEffect(() => {
     async function loadAnalysis() {
       try {
@@ -48,7 +51,7 @@ function AnalysisTab() {
 
         setData(response)
       } catch (err) {
-        errorToast(err?.message || "Something Went Wrong!")
+        errorToast(err?.message || 'Something Went Wrong!')
       } finally {
         setLoading(false)
       }
@@ -107,7 +110,7 @@ function AnalysisTab() {
           emptyText="No expenses found for this period."
         />
       </section>
-      
+
       <section className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
         <div className="mb-5 flex items-center gap-3">
           <PieChart className="text-[#6f6258]" size={18} />
@@ -115,9 +118,7 @@ function AnalysisTab() {
             <h3 className="text-[1.05rem] font-semibold text-[#1f1814]">
               Top Merchants
             </h3>
-            <p className="text-sm text-[#766a61]">
-              Highest spending entities
-            </p>
+            <p className="text-sm text-[#766a61]">Highest spending entities</p>
           </div>
         </div>
 
@@ -158,16 +159,15 @@ function AnalysisTab() {
           </p>
         )}
       </section>
-
     </div>
-  );
+  )
 }
 
 function AnalysisFilters({
   period,
   customRange,
   onPeriodChange,
-  onCustomRangeChange,
+  onCustomRangeChange
 }) {
   const isCustom = period === 'custom'
 
@@ -176,7 +176,7 @@ function AnalysisFilters({
 
     onCustomRangeChange({
       ...customRange,
-      [name]: value,
+      [name]: value
     })
   }
 
@@ -231,9 +231,7 @@ function AnalysisFilters({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-[#6f6258]">
-              To Date
-            </label>
+            <label className="mb-1 block text-sm text-[#6f6258]">To Date</label>
             <input
               type="date"
               name="toDate"
@@ -249,21 +247,26 @@ function AnalysisFilters({
 }
 
 function MetricCard({ icon: Icon, label, value, tone }) {
-  const toneClass = tone === 'positive'
-    ? 'bg-emerald-50 text-emerald-800 border-emerald-100'
-    : tone === 'negative'
-      ? 'bg-rose-50 text-rose-800 border-rose-100'
-      : 'bg-amber-50 text-amber-800 border-amber-100'
+  const toneClass =
+    tone === 'positive'
+      ? 'bg-emerald-50 text-emerald-800 border-emerald-100'
+      : tone === 'negative'
+        ? 'bg-rose-50 text-rose-800 border-rose-100'
+        : 'bg-amber-50 text-amber-800 border-amber-100'
 
   return (
     <article className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-      <div className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl border ${toneClass}`}>
+      <div
+        className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl border ${toneClass}`}
+      >
         <Icon size={20} />
       </div>
       <p className="text-sm font-semibold text-[#776a61]">{label}</p>
-      <p className="mt-2 text-3xl font-bold tracking-[-0.04em] text-[#1f1814]">{value}</p>
+      <p className="mt-2 text-3xl font-bold tracking-[-0.04em] text-[#1f1814]">
+        {value}
+      </p>
     </article>
   )
 }
 
-export default AnalysisTab;
+export default AnalysisTab

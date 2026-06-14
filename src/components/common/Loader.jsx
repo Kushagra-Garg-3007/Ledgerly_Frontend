@@ -2,7 +2,7 @@ function Loader({ size = 'md', centered = false }) {
   const sizeClasses = {
     sm: 'h-4 w-4 border-[2px]',
     md: 'h-7 w-7 border-[2.5px]',
-    lg: 'h-10 w-10 border-[3px]',
+    lg: 'h-10 w-10 border-[3px]'
   }
 
   const spinner = (
@@ -43,11 +43,7 @@ function Loader({ size = 'md', centered = false }) {
   )
 
   if (centered) {
-    return (
-      <div className="flex justify-center py-8">
-        {spinner}
-      </div>
-    )
+    return <div className="flex justify-center py-8">{spinner}</div>
   }
 
   return spinner

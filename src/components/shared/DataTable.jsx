@@ -9,7 +9,7 @@ function DataTable({
   emptyIcon = '[ ]',
   className = '',
   rowClassName = '',
-  minWidthClassName = 'min-w-[640px]',
+  minWidthClassName = 'min-w-[640px]'
 }) {
   if (!columns.length) {
     return null
@@ -30,11 +30,13 @@ function DataTable({
     key: column.key ?? column.accessorKey,
     cell: column.cell ?? column.render,
     sortable: Boolean(column.sortable),
-    sortKey: column.sortKey ?? column.key ?? column.accessorKey,
+    sortKey: column.sortKey ?? column.key ?? column.accessorKey
   }))
 
   return (
-    <div className={`overflow-x-auto rounded-2xl border border-[#e8dfd6] ${className}`}>
+    <div
+      className={`overflow-x-auto rounded-2xl border border-[#e8dfd6] ${className}`}
+    >
       <table className={`w-full text-left ${minWidthClassName}`}>
         <thead className="bg-[#f8f4ef] text-xs uppercase tracking-wide text-[#7c6f66]">
           <tr>
@@ -43,7 +45,8 @@ function DataTable({
                 key={column.key || column.label}
                 className={`px-4 py-3 font-semibold ${column.headerClassName || ''}`}
               >
-                {column.sortable && typeof column.onSortChange === 'function' ? (
+                {column.sortable &&
+                typeof column.onSortChange === 'function' ? (
                   <button
                     type="button"
                     className="inline-flex items-center gap-1.5 transition-colors hover:text-[#2f241f]"

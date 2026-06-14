@@ -13,7 +13,7 @@ const Input = forwardRef(function Input(
     className = '',
     ...props
   },
-  ref,
+  ref
 ) {
   return (
     <div className="space-y-2">
@@ -95,13 +95,14 @@ const Input = forwardRef(function Input(
 
             ${rightElement ? 'pr-12' : ''}
 
-            ${error
-              ? `
+            ${
+              error
+                ? `
                   border-red-300
                   focus:border-red-300
                   focus:ring-red-100/60
                 `
-              : ''
+                : ''
             }
 
             ${className}
@@ -124,9 +125,7 @@ const Input = forwardRef(function Input(
       </div>
 
       {error && (
-        <p className="pl-1 text-xs font-medium text-red-600">
-          {error}
-        </p>
+        <p className="pl-1 text-xs font-medium text-red-600">{error}</p>
       )}
     </div>
   )

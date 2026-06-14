@@ -62,7 +62,10 @@ function LedgerPage() {
               />
             )}
             emptyTitle="No ledger entries found"
-            emptyDescription={ledger.transactionsError || 'Try adjusting filters or add a new entry.'}
+            emptyDescription={
+              ledger.transactionsError ||
+              'Try adjusting filters or add a new entry.'
+            }
           />
 
           {!ledger.transactionsLoading && ledger.totalEntries > 0 ? (
@@ -90,8 +93,12 @@ function LedgerPage() {
         onClose={entryModal.close}
         onSubmit={entryModal.handleSubmit}
         onConfirmSingleRowUpdate={entryModal.handleConfirmSingleRowUpdate}
-        onConfirmMatchingEntityUpdate={entryModal.handleConfirmMatchingEntityUpdate}
-        onCancelCategoryConfirmation={entryModal.handleCancelCategoryConfirmation}
+        onConfirmMatchingEntityUpdate={
+          entryModal.handleConfirmMatchingEntityUpdate
+        }
+        onCancelCategoryConfirmation={
+          entryModal.handleCancelCategoryConfirmation
+        }
       />
 
       <LedgerDetailsModal
@@ -133,7 +140,8 @@ function PageHeader() {
         </h1>
 
         <p className="mt-3 max-w-2xl text-sm leading-7 text-[#6a5d55] sm:text-base">
-          Review all debit and credit entries, apply filters, and manage transaction notes.
+          Review all debit and credit entries, apply filters, and manage
+          transaction notes.
         </p>
       </div>
     </div>

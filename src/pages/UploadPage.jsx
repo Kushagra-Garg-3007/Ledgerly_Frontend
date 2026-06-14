@@ -1,10 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
-import { CheckCircle2, CloudUpload, FileCheck2, FileSpreadsheet, FileText, HardDriveUpload, LoaderCircle, Sparkles, UploadCloud, CalendarDays, X } from 'lucide-react'
+import {
+  CheckCircle2,
+  CloudUpload,
+  FileCheck2,
+  FileSpreadsheet,
+  FileText,
+  HardDriveUpload,
+  LoaderCircle,
+  Sparkles,
+  UploadCloud,
+  CalendarDays,
+  X
+} from 'lucide-react'
 import Button from '../components/common/Button'
 import DataTable from '../components/shared/DataTable'
 import Skeleton from '../components/skeletons/Skeleton'
 import SkeletonTable from '../components/skeletons/SkeletonTable'
-import { uploadFile, getRecentUploads, } from '../api/uploadApi'
+import { uploadFile, getRecentUploads } from '../api/uploadApi'
 import { errorToast } from '../utils/toast'
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
@@ -64,7 +76,7 @@ function UploadPage() {
     failedUploads: 0,
     processingUploads: 0,
     completedUploads: 0,
-    lastProcessedFileName: '',
+    lastProcessedFileName: ''
   })
   const [loading, setLoading] = useState(false)
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
@@ -85,7 +97,7 @@ function UploadPage() {
         processingUploads: data?.processingUploads || 0,
         completedUploads: data?.completedUploads || 0,
         lastProcessedFileName:
-          data?.lastProcessedFileName || 'No file processed yet',
+          data?.lastProcessedFileName || 'No file processed yet'
       })
     } catch (error) {
       setRecentUploads([])
@@ -94,7 +106,7 @@ function UploadPage() {
         failedUploads: 0,
         processingUploads: 0,
         completedUploads: 0,
-        lastProcessedFileName: 'No file processed yet',
+        lastProcessedFileName: 'No file processed yet'
       })
       errorToast(error.message)
     } finally {
@@ -171,18 +183,15 @@ function UploadPage() {
     setUploadProgress(0)
 
     try {
-      const response = await uploadFile(
-        selectedFile,
-        (progressEvent) => {
-          if (!progressEvent.total) return
+      const response = await uploadFile(selectedFile, (progressEvent) => {
+        if (!progressEvent.total) return
 
-          const percent = Math.round(
-            (progressEvent.loaded / progressEvent.total) * 100
-          )
+        const percent = Math.round(
+          (progressEvent.loaded / progressEvent.total) * 100
+        )
 
-          setUploadProgress(Math.min(100, percent))
-        }
-      )
+        setUploadProgress(Math.min(100, percent))
+      })
 
       setUploadResponse(response)
       setUploadProgress(100)
@@ -190,9 +199,7 @@ function UploadPage() {
       if (response?.status === 'Failed') {
         setUploadStatus('idle')
 
-        errorToast(
-          response?.message || 'Upload failed. Please try again.'
-        )
+        errorToast(response?.message || 'Upload failed. Please try again.')
 
         return
       }
@@ -216,12 +223,12 @@ function UploadPage() {
     {
       label: 'File Name',
       key: 'fileName',
-      cellClassName: 'font-medium text-[#3f342d]',
+      cellClassName: 'font-medium text-[#3f342d]'
     },
     {
       label: 'Upload Date',
       key: 'uploadDate',
-      cellClassName: 'text-[#6e6158]',
+      cellClassName: 'text-[#6e6158]'
     },
     {
       label: 'Status',
@@ -234,29 +241,24 @@ function UploadPage() {
         >
           {value}
         </span>
-      ),
+      )
     },
     {
       label: 'Type',
       key: 'type',
-      cellClassName: 'text-[#6e6158]',
-    },
+      cellClassName: 'text-[#6e6158]'
+    }
   ]
 
-  const showIdleState =
-    !selectedFile && uploadStatus === 'idle'
+  const showIdleState = !selectedFile && uploadStatus === 'idle'
 
-  const showPreviewState =
-    !!selectedFile && uploadStatus === 'ready'
+  const showPreviewState = !!selectedFile && uploadStatus === 'ready'
 
-  const showUploadProgressState =
-    uploadStatus === 'uploading'
+  const showUploadProgressState = uploadStatus === 'uploading'
 
-  const showProcessingState =
-    uploadStatus === 'processing'
+  const showProcessingState = uploadStatus === 'processing'
 
-  const showCompletedState =
-    uploadStatus === 'processed'
+  const showCompletedState = uploadStatus === 'processed'
 
   const showInitialDataSkeleton = loading && !hasLoadedOnce
 
@@ -279,9 +281,8 @@ function UploadPage() {
         </h1>
 
         <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#665a52] sm:text-lg">
-          Import Excel or CSV files to generate analytics,
-          insights, and smart categorization with
-          backend-verified processing.
+          Import Excel or CSV files to generate analytics, insights, and smart
+          categorization with backend-verified processing.
         </p>
       </section>
 
@@ -310,28 +311,20 @@ function UploadPage() {
               border-2 border-dashed p-7 text-center
               transition-all duration-300 sm:p-10
 
-              ${isDragging
-                ? 'border-[#8f715d] bg-[#fbf5ed]'
-                : 'border-[#d6c8b8] bg-[#fdfaf5]'
+              ${
+                isDragging
+                  ? 'border-[#8f715d] bg-[#fbf5ed]'
+                  : 'border-[#d6c8b8] bg-[#fdfaf5]'
               }
 
-              ${showCompletedState
-                ? 'border-emerald-300 bg-emerald-50/70'
-                : ''
-              }
+              ${showCompletedState ? 'border-emerald-300 bg-emerald-50/70' : ''}
             `}
           >
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e1d4c6] bg-white text-[#776559] shadow-sm">
               {showUploadProgressState || showProcessingState ? (
-                <LoaderCircle
-                  className="animate-spin"
-                  size={24}
-                />
+                <LoaderCircle className="animate-spin" size={24} />
               ) : showCompletedState ? (
-                <CheckCircle2
-                  size={24}
-                  className="text-emerald-700"
-                />
+                <CheckCircle2 size={24} className="text-emerald-700" />
               ) : (
                 <UploadCloud size={24} />
               )}
@@ -387,9 +380,7 @@ function UploadPage() {
                 <div className="mt-4 flex justify-center">
                   <Button
                     className="rounded-xl px-6"
-                    onClick={() =>
-                      setShowConfirmModal(true)
-                    }
+                    onClick={() => setShowConfirmModal(true)}
                   >
                     <Sparkles size={16} />
                     Analyze File
@@ -408,7 +399,7 @@ function UploadPage() {
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-[#6d5547] via-[#8a6b58] to-[#b08b74]"
                     style={{
-                      width: `${uploadProgress}%`,
+                      width: `${uploadProgress}%`
                     }}
                   />
                 </div>
@@ -427,20 +418,15 @@ function UploadPage() {
                 </p>
 
                 <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#e2d4c6] bg-white px-4 py-2 text-sm font-medium text-[#6b5a4f]">
-                  <LoaderCircle
-                    size={16}
-                    className="animate-spin"
-                  />
+                  <LoaderCircle size={16} className="animate-spin" />
                   Processing...
                 </div>
 
-                {(backendStatusNote ||
-                  backendReferenceId) && (
-                    <p className="mt-3 text-xs text-[#7a6c63]">
-                      {backendStatusNote ||
-                        `Reference: ${backendReferenceId}`}
-                    </p>
-                  )}
+                {(backendStatusNote || backendReferenceId) && (
+                  <p className="mt-3 text-xs text-[#7a6c63]">
+                    {backendStatusNote || `Reference: ${backendReferenceId}`}
+                  </p>
+                )}
               </div>
             )}
 
@@ -457,18 +443,13 @@ function UploadPage() {
             <Button
               className="rounded-xl px-6"
               onClick={() => inputRef.current?.click()}
-              disabled={
-                showUploadProgressState ||
-                showProcessingState
-              }
+              disabled={showUploadProgressState || showProcessingState}
             >
               <CloudUpload size={17} />
               Choose File
             </Button>
 
-            <p className="text-xs text-[#7b6f66]">
-              Max size: 10 MB
-            </p>
+            <p className="text-xs text-[#7b6f66]">Max size: 10 MB</p>
           </div>
 
           <input
@@ -510,22 +491,30 @@ function UploadPage() {
               <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Total uploads</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.totalUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">
+                    {uploadSummary.totalUploads}
+                  </p>
                 </div>
 
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Failed</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.failedUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">
+                    {uploadSummary.failedUploads}
+                  </p>
                 </div>
 
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Processing</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.processingUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">
+                    {uploadSummary.processingUploads}
+                  </p>
                 </div>
 
                 <div className="rounded-xl border border-[#e6dbce] bg-[#faf5ee] p-3">
                   <p className="text-xs text-[#7d6f66]">Completed</p>
-                  <p className="mt-1 text-xl font-semibold text-[#221a16]">{uploadSummary.completedUploads}</p>
+                  <p className="mt-1 text-xl font-semibold text-[#221a16]">
+                    {uploadSummary.completedUploads}
+                  </p>
                 </div>
               </div>
 
@@ -559,25 +548,17 @@ function UploadPage() {
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl border border-[#e7dccc] bg-[#fdf9f3] p-4">
-            <FileText
-              size={18}
-              className="text-[#7f6654]"
-            />
+            <FileText size={18} className="text-[#7f6654]" />
 
             <p className="mt-3 text-sm font-semibold text-[#2d241f]">
               Accepted formats
             </p>
 
-            <p className="mt-1 text-xs text-[#6d5f56]">
-              XLSX, XLS, CSV
-            </p>
+            <p className="mt-1 text-xs text-[#6d5f56]">XLSX, XLS, CSV</p>
           </div>
 
           <div className="rounded-2xl border border-[#e7dccc] bg-[#fdf9f3] p-4">
-            <HardDriveUpload
-              size={18}
-              className="text-[#7f6654]"
-            />
+            <HardDriveUpload size={18} className="text-[#7f6654]" />
 
             <p className="mt-3 text-sm font-semibold text-[#2d241f]">
               Max file size
@@ -589,10 +570,7 @@ function UploadPage() {
           </div>
 
           <div className="rounded-2xl border border-[#e7dccc] bg-[#fdf9f3] p-4">
-            <CalendarDays
-              size={18}
-              className="text-[#7f6654]"
-            />
+            <CalendarDays size={18} className="text-[#7f6654]" />
 
             <p className="mt-3 text-sm font-semibold text-[#2d241f]">
               Header row
@@ -604,10 +582,7 @@ function UploadPage() {
           </div>
 
           <div className="rounded-2xl border border-[#e7dccc] bg-[#fdf9f3] p-4">
-            <FileCheck2
-              size={18}
-              className="text-[#7f6654]"
-            />
+            <FileCheck2 size={18} className="text-[#7f6654]" />
 
             <p className="mt-3 text-sm font-semibold text-[#2d241f]">
               Recommended template
@@ -639,10 +614,7 @@ function UploadPage() {
         ) : loading ? (
           <div className="rounded-2xl border border-[#e7dccf] bg-white/80 px-6 py-10 text-center text-[#6f6258]">
             <div className="inline-flex items-center gap-2 text-sm font-medium">
-              <LoaderCircle
-                size={16}
-                className="animate-spin"
-              />
+              <LoaderCircle size={16} className="animate-spin" />
               Loading recent uploads...
             </div>
           </div>
@@ -676,9 +648,7 @@ function UploadPage() {
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowConfirmModal(false)
-                }
+                onClick={() => setShowConfirmModal(false)}
                 className="rounded-lg border border-[#e4d8ca] bg-white/80 p-2 text-[#6a5c52]"
               >
                 <X size={16} />
@@ -702,17 +672,12 @@ function UploadPage() {
               <Button
                 variant="outline"
                 className="rounded-xl px-5"
-                onClick={() =>
-                  setShowConfirmModal(false)
-                }
+                onClick={() => setShowConfirmModal(false)}
               >
                 Cancel
               </Button>
 
-              <Button
-                className="rounded-xl px-5"
-                onClick={startUpload}
-              >
+              <Button className="rounded-xl px-5" onClick={startUpload}>
                 Confirm & Analyze
               </Button>
             </div>

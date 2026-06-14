@@ -12,7 +12,7 @@ const formatError = (error) => {
 export const getTransactions = async (params = {}) => {
   try {
     const response = await axios.get(apiEndPoint.transactions(), {
-      params,
+      params
     })
     return response.data
   } catch (error) {
@@ -23,7 +23,7 @@ export const getTransactions = async (params = {}) => {
 export const getTransactionSummary = async (params = {}) => {
   try {
     const response = await axios.get(apiEndPoint.transactionSummary(), {
-      params,
+      params
     })
     return response.data
   } catch (error) {
@@ -44,7 +44,7 @@ export const updateSingleTransaction = async (payload) => {
   try {
     const response = await axios.post(
       apiEndPoint.updateTransactionAnnotation(),
-      payload,
+      payload
     )
     return response.data
   } catch (error) {
@@ -54,8 +54,9 @@ export const updateSingleTransaction = async (payload) => {
 
 export const updateTransactionsByEntity = async (payload) => {
   try {
-    const response = await axios.post(apiEndPoint.updateTransactionsByEntity(),
-      payload,
+    const response = await axios.post(
+      apiEndPoint.updateTransactionsByEntity(),
+      payload
     )
     return response.data
   } catch (error) {
@@ -66,7 +67,7 @@ export const updateTransactionsByEntity = async (payload) => {
 export const deleteTransaction = async (transactionId) => {
   try {
     const response = await axios.delete(
-      apiEndPoint.transactionById(transactionId),
+      apiEndPoint.transactionById(transactionId)
     )
     return response.data
   } catch (error) {

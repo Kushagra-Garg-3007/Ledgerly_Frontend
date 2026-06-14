@@ -4,7 +4,7 @@ function AuthGuard({
   children,
   disabledClassName = '',
   title = 'Login required',
-  className = '',
+  className = ''
 }) {
   const { initialized, isAuthenticated } = useSelector((state) => state.auth)
   const disabled = initialized && !isAuthenticated

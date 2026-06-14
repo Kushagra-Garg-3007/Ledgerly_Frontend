@@ -13,22 +13,26 @@ function UserMenu() {
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 
-  const displayName = useMemo(() => (
-    user?.displayName ||
-    user?.name ||
-    user?.fullName ||
-    user?.username ||
-    user?.email ||
-    'Account'
-  ), [user])
+  const displayName = useMemo(
+    () =>
+      user?.displayName ||
+      user?.name ||
+      user?.fullName ||
+      user?.username ||
+      user?.email ||
+      'Account',
+    [user]
+  )
 
-  const avatarUrl = useMemo(() => (
-    user?.avatarUrl ||
-    user?.avatar ||
-    user?.profileImage ||
-    user?.image ||
-    null
-  ), [user])
+  const avatarUrl = useMemo(
+    () =>
+      user?.avatarUrl ||
+      user?.avatar ||
+      user?.profileImage ||
+      user?.image ||
+      null,
+    [user]
+  )
 
   useEffect(() => {
     const onPointerDown = (event) => {
@@ -125,9 +129,11 @@ function UserMenu() {
           shadow-[0_14px_35px_rgba(40,28,20,0.14)]
           backdrop-blur-xl
           transition-all duration-150 ease-out
-          ${open
-            ? 'pointer-events-auto scale-100 opacity-100'
-            : 'pointer-events-none scale-[0.98] opacity-0'}
+          ${
+            open
+              ? 'pointer-events-auto scale-100 opacity-100'
+              : 'pointer-events-none scale-[0.98] opacity-0'
+          }
         `}
         role="menu"
         aria-hidden={!open}

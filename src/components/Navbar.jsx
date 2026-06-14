@@ -81,13 +81,14 @@ function Navbar() {
                     group relative flex items-center gap-2 rounded-xl
                     px-3.5 py-2 font-body text-sm font-medium
                     transition-all duration-200 ease-out
-                    ${isActive
-                      ? `
+                    ${
+                      isActive
+                        ? `
                           bg-[#ece2d7]
                           text-[#1f1814]
                           shadow-[0_1px_2px_rgba(40,28,20,0.04)]
                         `
-                      : `
+                        : `
                           text-[#6b5e57]
                           hover:bg-[#efe7de]
                           hover:text-[#2f241f]
@@ -95,7 +96,10 @@ function Navbar() {
                     }
                   `}
                 >
-                  <Icon size={16} className="transition-transform duration-200 group-hover:scale-[1.04]" />
+                  <Icon
+                    size={16}
+                    className="transition-transform duration-200 group-hover:scale-[1.04]"
+                  />
                   <span>{item.label}</span>
                 </NavLink>
               </AuthGuard>

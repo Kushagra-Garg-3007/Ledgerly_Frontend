@@ -4,8 +4,8 @@ const axios = Axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 })
 
 let refreshPromise = null
@@ -51,7 +51,7 @@ axios.interceptors.response.use(
 
       return Promise.reject(refreshError)
     }
-  },
+  }
 )
 
 export default axios

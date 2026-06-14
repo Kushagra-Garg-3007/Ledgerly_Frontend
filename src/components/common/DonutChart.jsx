@@ -1,4 +1,4 @@
-import {PieChart, Pie, Cell, ResponsiveContainer, Tooltip} from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 
 import Card from './Card'
 import { formatAmount } from '../../utils/transactionUtils'
@@ -9,7 +9,7 @@ const COLORS = [
   '#356ea8',
   '#8b5aa8',
   '#b74f6b',
-  '#64748b',
+  '#64748b'
 ]
 
 function CustomTooltip({ active, payload }) {
@@ -21,39 +21,25 @@ function CustomTooltip({ active, payload }) {
 
   return (
     <div className="rounded-xl border border-[#e7ddd2] bg-white p-3 shadow-lg">
-      <p className="font-medium text-[#1f1814]">
-        {item.name}
-      </p>
+      <p className="font-medium text-[#1f1814]">{item.name}</p>
 
-      <p className="text-sm text-[#6f6258]">
-        ₹{formatAmount(item.amount)}
-      </p>
+      <p className="text-sm text-[#6f6258]">₹{formatAmount(item.amount)}</p>
 
-      <p className="text-sm text-[#6f6258]">
-        {item.percentage}%
-      </p>
+      <p className="text-sm text-[#6f6258]">{item.percentage}%</p>
     </div>
   )
 }
 
-function DountChart({
-  title,
-  subtitle,
-  data,
-  emptyText,
-}) {
+function DountChart({ title, subtitle, data, emptyText }) {
   const chartData = (data || [])
-  .map(item => ({
-    ...item,
-    amount: Number(item.amount) || 0,
-  }))
-  .filter(item => item.amount > 0)
+    .map((item) => ({
+      ...item,
+      amount: Number(item.amount) || 0
+    }))
+    .filter((item) => item.amount > 0)
 
   return (
-    <Card
-      title={title}
-      subtitle={subtitle}
-    >
+    <Card title={title} subtitle={subtitle}>
       {!chartData.length ? (
         <p className="rounded-xl border border-[#e9ded1] bg-[#fbf8f4] px-4 py-3 text-sm text-[#76685f]">
           {emptyText}
@@ -93,8 +79,7 @@ function DountChart({
                   <span
                     className="h-3 w-3 rounded-full"
                     style={{
-                      backgroundColor:
-                        COLORS[index % COLORS.length],
+                      backgroundColor: COLORS[index % COLORS.length]
                     }}
                   />
 

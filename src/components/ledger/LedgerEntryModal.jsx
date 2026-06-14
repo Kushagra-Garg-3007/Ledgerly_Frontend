@@ -33,16 +33,17 @@ function LedgerEntryModal({
   onSubmit,
   onConfirmSingleRowUpdate,
   onConfirmMatchingEntityUpdate,
-  onCancelCategoryConfirmation,
+  onCancelCategoryConfirmation
 }) {
   const [newCategoryName, setNewCategoryName] = useState('')
 
   if (!open) return null
 
   const title = mode === 'edit' ? 'Edit Ledger Entry' : 'Add Ledger Entry'
-  const helperText = mode === 'edit'
-    ? 'Update the category and notes for this transaction.'
-    : 'Add a quick ledger note using category and description.'
+  const helperText =
+    mode === 'edit'
+      ? 'Update the category and notes for this transaction.'
+      : 'Add a quick ledger note using category and description.'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1f1814]/28 px-4 backdrop-blur-sm">
@@ -52,7 +53,9 @@ function LedgerEntryModal({
             <h4 className="text-2xl font-semibold tracking-[-0.04em] text-[#241c17]">
               {title}
             </h4>
-            <p className="mt-3 text-sm leading-6 text-[#66584f]">{helperText}</p>
+            <p className="mt-3 text-sm leading-6 text-[#66584f]">
+              {helperText}
+            </p>
           </div>
 
           <button
@@ -87,7 +90,9 @@ function LedgerEntryModal({
               ))}
             </select>
             {errors.category ? (
-              <p className="mt-2 pl-1 text-xs font-medium text-red-600">{errors.category}</p>
+              <p className="mt-2 pl-1 text-xs font-medium text-red-600">
+                {errors.category}
+              </p>
             ) : null}
 
             <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]">
@@ -102,7 +107,9 @@ function LedgerEntryModal({
                 variant="outline"
                 className="rounded-xl px-4"
                 loading={creatingCategory}
-                disabled={!newCategoryName.trim() || creatingCategory || loading}
+                disabled={
+                  !newCategoryName.trim() || creatingCategory || loading
+                }
                 onClick={async () => {
                   await onCreateCategory(newCategoryName)
                   setNewCategoryName('')
@@ -160,7 +167,9 @@ function LedgerEntryModal({
                 </h4>
 
                 <p className="mt-3 text-sm leading-6 text-[#66584f]">
-                  Do you want to update the category only for this transaction, or for all transactions with entity '{activeEntry?.entityName || activeEntry?.description}'?
+                  Do you want to update the category only for this transaction,
+                  or for all transactions with entity '
+                  {activeEntry?.entityName || activeEntry?.description}'?
                 </p>
               </div>
 

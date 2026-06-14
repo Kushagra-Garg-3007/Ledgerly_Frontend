@@ -17,9 +17,9 @@ export const uploadFile = async (file, onUploadProgress) => {
     const response = await axios.post(apiEndPoint.upload(), formData, {
       onUploadProgress,
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'multipart/form-data'
       },
-      timeout: 120000,
+      timeout: 120000
     })
 
     return response.data

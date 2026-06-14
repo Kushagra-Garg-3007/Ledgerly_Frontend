@@ -12,7 +12,6 @@ import ProfilePage from './pages/ProfilePage'
 import LedgerPage from './pages/LedgerPage'
 import AnalyticsPage from './pages/analytics/AnalyticsPage'
 
-
 function App() {
   return (
     <>
@@ -20,47 +19,23 @@ function App() {
       <AuthInitializer />
 
       <Routes>
-        <Route
-          path="/login"
-          element={<LoginPage />}
-        />
+        <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/signup"
-          element={<SignupPage />}
-        />
+        <Route path="/signup" element={<SignupPage />} />
 
         <Route element={<AppLayout />}>
-          <Route
-            path="/"
-            element={<LandingPage />}
-          />
+          <Route path="/" element={<LandingPage />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route
-              path="/ledger"
-              element={<LedgerPage />}
-            />
+            <Route path="/ledger" element={<LedgerPage />} />
 
-            <Route
-              path="/analysis"
-              element={<AnalyticsPage />}
-            />
+            <Route path="/analysis" element={<AnalyticsPage />} />
 
-            <Route
-              path="/profile"
-              element={<ProfilePage />}
-            />
+            <Route path="/profile" element={<ProfilePage />} />
 
-            <Route
-              path="/upload"
-              element={<UploadPage />}
-            />
+            <Route path="/upload" element={<UploadPage />} />
 
-            <Route
-              path="/categories"
-              element={<CategoriesPage />}
-            />
+            <Route path="/categories" element={<CategoriesPage />} />
           </Route>
         </Route>
       </Routes>

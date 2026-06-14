@@ -1,9 +1,6 @@
 import Skeleton from './Skeleton'
 
-function SkeletonSurface({
-  children,
-  className = '',
-}) {
+function SkeletonSurface({ children, className = '' }) {
   return (
     <div
       className={`
@@ -23,11 +20,7 @@ function SkeletonSurface({
   )
 }
 
-function SkeletonPage({
-  showHeader = true,
-  cards = 3,
-  rows = 5,
-}) {
+function SkeletonPage({ showHeader = true, cards = 3, rows = 5 }) {
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -41,20 +34,15 @@ function SkeletonPage({
 
       {/* Stats / Widget Cards */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {Array.from({ length: cards }).map(
-          (_, index) => (
-            <SkeletonSurface
-              key={index}
-              className="p-5"
-            >
-              <Skeleton className="h-3 w-20 rounded-full" />
+        {Array.from({ length: cards }).map((_, index) => (
+          <SkeletonSurface key={index} className="p-5">
+            <Skeleton className="h-3 w-20 rounded-full" />
 
-              <Skeleton className="mt-4 h-8 w-28 rounded-md" />
+            <Skeleton className="mt-4 h-8 w-28 rounded-md" />
 
-              <Skeleton className="mt-4 h-3 w-16 rounded-full" />
-            </SkeletonSurface>
-          ),
-        )}
+            <Skeleton className="mt-4 h-3 w-16 rounded-full" />
+          </SkeletonSurface>
+        ))}
       </div>
 
       {/* Main Content */}
@@ -72,11 +60,10 @@ function SkeletonPage({
 
         {/* Table/List */}
         <div className="mt-8 space-y-3">
-          {Array.from({ length: rows }).map(
-            (_, index) => (
-              <div
-                key={index}
-                className="
+          {Array.from({ length: rows }).map((_, index) => (
+            <div
+              key={index}
+              className="
                   flex items-center justify-between
 
                   rounded-xl
@@ -87,17 +74,16 @@ function SkeletonPage({
 
                   px-4 py-3
                 "
-              >
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-44 rounded-full" />
+            >
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-44 rounded-full" />
 
-                  <Skeleton className="h-3 w-28 rounded-full" />
-                </div>
-
-                <Skeleton className="h-4 w-16 rounded-full" />
+                <Skeleton className="h-3 w-28 rounded-full" />
               </div>
-            ),
-          )}
+
+              <Skeleton className="h-4 w-16 rounded-full" />
+            </div>
+          ))}
         </div>
       </SkeletonSurface>
     </div>

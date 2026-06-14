@@ -1,12 +1,20 @@
-import { ArrowUp, ArrowDown, CheckCircle, AlertTriangle , Brain, CalendarDays, TrendingDown, TrendingUp } from 'lucide-react'
-// import { formatCurrency, formatPercent, insightPeriods, percentChange } from './analyticsUtils'
-import { useState, useEffect, useMemo } from 'react';
-import { errorToast } from '../../utils/toast';
-import SkeletonPage from '../../components/skeletons/SkeletonPage';
-import { formatAmount } from '../../utils/transactionUtils';
-import { getInsightDateRange } from '../../utils/getDataRangeUtils';
-import EmptyState from '../../components/common/EmptyState';
-import { fetchInsights } from '../../api/analysisApi';
+import {
+  ArrowUp,
+  ArrowDown,
+  CheckCircle,
+  AlertTriangle,
+  Brain,
+  CalendarDays,
+  TrendingDown,
+  TrendingUp
+} from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { errorToast } from '../../utils/toast'
+import SkeletonPage from '../../components/skeletons/SkeletonPage'
+import { formatAmount } from '../../utils/transactionUtils'
+import { getInsightDateRange } from '../../utils/getDataRangeUtils'
+import EmptyState from '../../components/common/EmptyState'
+import { fetchInsights } from '../../api/analysisApi'
 
 const QUICK_RANGES = [
   { label: 'Current Month', value: 'current_month' },
@@ -14,75 +22,70 @@ const QUICK_RANGES = [
   { label: 'Last 3 Months', value: 'last_3_months' },
   { label: 'Last 6 Months', value: 'last_6_months' },
   { label: 'Last Year', value: 'last_year' },
-  { label: 'Custom', value: 'custom' },
+  { label: 'Custom', value: 'custom' }
 ]
 
 const formatCurrency = (value) => formatAmount(Math.round(value || 0))
 
 function InsightsTab() {
+  const [period, setPeriod] = useState('current_month')
 
-    const [period, setPeriod] = useState('current_month');
-  
-    const [customRange, setCustomRange] = useState({
-      previousPeriodStartDate: '',
-      previousPeriodEndDate: '',
-      currentPeriodStartDate: '',
-      currentPeriodEndDate: ''
-    });
+  const [customRange, setCustomRange] = useState({
+    previousPeriodStartDate: '',
+    previousPeriodEndDate: '',
+    currentPeriodStartDate: '',
+    currentPeriodEndDate: ''
+  })
 
-    function isValidCustomRange(period, customRange) {
-      if (period !== 'custom') return true
+  function isValidCustomRange(period, customRange) {
+    if (period !== 'custom') return true
 
-      console.log("valid check: ", customRange)
 
-      return (
-        customRange.previousPeriodStartDate?.trim() &&
-        customRange.previousPeriodEndDate?.trim() &&
-        customRange.currentPeriodStartDate?.trim() &&
-        customRange.currentPeriodEndDate?.trim()
-      )
+    return (
+      customRange.previousPeriodStartDate?.trim() &&
+      customRange.previousPeriodEndDate?.trim() &&
+      customRange.currentPeriodStartDate?.trim() &&
+      customRange.currentPeriodEndDate?.trim()
+    )
+  }
+
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function loadInsights() {
+      try {
+        setLoading(true)
+        const range = getInsightDateRange(period, customRange)
+        const response = await fetchInsights(range)
+
+        setData(response)
+      } catch (err) {
+        errorToast(err?.message || 'Something Went Wrong!')
+      } finally {
+        setLoading(false)
+      }
     }
-  
-    const [data, setData] = useState(null)
-    const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-      async function loadInsights() {
-        try {
-          setLoading(true)
-          const range = getInsightDateRange(period, customRange) 
-          const response = await fetchInsights(range)
-
-          setData(response)
-        } catch (err) {
-          errorToast(err?.message || "Something Went Wrong!")
-        } finally {
-          setLoading(false)
-        }
-      }
-  
-      if (!isValidCustomRange(period, customRange)) {
-        return
-      }
-  
-      loadInsights()
-    }, [period, customRange])
-
-    const percentChange = (current, previous) => {
-
-      if (current === 0 && previous === 0) return 0
-      let result
-      if (previous === 0) {
-        result = current > 0 ? 100 : current < 0 ? -100 : 0
-      }
-      else result = ((current - previous) / Math.abs(previous)) * 100
-
-      return Number(result.toFixed(2))
+    if (!isValidCustomRange(period, customRange)) {
+      return
     }
-  
+
+    loadInsights()
+  }, [period, customRange])
+
+  const percentChange = (current, previous) => {
+    if (current === 0 && previous === 0) return 0
+    let result
+    if (previous === 0) {
+      result = current > 0 ? 100 : current < 0 ? -100 : 0
+    } else result = ((current - previous) / Math.abs(previous)) * 100
+
+    return Number(result.toFixed(2))
+  }
+
   const financialSummary = useMemo(() => {
-
-    if(!data) return null;
+    if (!data) return null
 
     const currentIncome = data.incomeChanges.reduce(
       (sum, item) => sum + item.currentAverage,
@@ -116,43 +119,31 @@ function InsightsTab() {
 
     const needsAttention = data.spendingIncreased.reduce(
       (worst, item) =>
-        !worst || item.difference > worst.difference
-          ? item
-          : worst,
+        !worst || item.difference > worst.difference ? item : worst,
       null
     )
 
     return {
       income: {
-        title: "Income",
+        title: 'Income',
         currentValue: currentIncome,
         previousValue: previousIncome,
-        percentageChange: percentChange(
-          currentIncome,
-          previousIncome
-        )
+        percentageChange: percentChange(currentIncome, previousIncome)
       },
 
       expense: {
-        title: "Expense",
+        title: 'Expense',
         currentValue: currentExpense,
         previousValue: previousExpense,
-        percentageChange: percentChange(
-          currentExpense,
-          previousExpense
-        )
+        percentageChange: percentChange(currentExpense, previousExpense)
       },
 
       savings: {
-        title: "Savings",
+        title: 'Savings',
         currentValue: currentSavings,
         previousValue: previousSavings,
-        percentageChange: percentChange(
-          currentSavings,
-          previousSavings
-        ),
-        directIncrease:
-          currentSavings - previousSavings
+        percentageChange: percentChange(currentSavings, previousSavings),
+        directIncrease: currentSavings - previousSavings
       },
 
       biggestImprovement,
@@ -165,20 +156,17 @@ function InsightsTab() {
   function handleDateChange(e) {
     const { name, value } = e.target
 
-    setCustomRange(prev => ({
+    setCustomRange((prev) => ({
       ...prev,
       [name]: value
     }))
   }
 
-
   if (loading) return <SkeletonPage />
 
   return (
-    
     <div>
       <section className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-        
         <div className="mb-4 flex items-center gap-3">
           <CalendarDays className="text-[#6f6258]" size={18} />
 
@@ -269,8 +257,10 @@ function InsightsTab() {
       </section>
 
       <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-        <h2 className="text-xl font-bold text-[#1f1814] mb-6">Financial Summary</h2>
-        
+        <h2 className="text-xl font-bold text-[#1f1814] mb-6">
+          Financial Summary
+        </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <SummaryCard
             title="Income"
@@ -301,10 +291,7 @@ function InsightsTab() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 px-5 py-4">
               <div className="flex items-start gap-3">
-                <CheckCircle
-                  size={24}
-                  className="mt-0.5 text-emerald-600"
-                />
+                <CheckCircle size={24} className="mt-0.5 text-emerald-600" />
 
                 <div>
                   <p className="text-lg font-semibold text-[#56493e]">
@@ -317,17 +304,19 @@ function InsightsTab() {
                     </p>
 
                     <PercentageBadge
-                      value={financialSummary?.biggestImprovement?.percentageChange}
+                      value={
+                        financialSummary?.biggestImprovement?.percentageChange
+                      }
                       variant="success"
                     />
                   </div>
 
                   <p className="mt-1 text-sm font-semibold text-[#6f6258]">
-                    Spending reduced by
-                    {' '}
+                    Spending reduced by{' '}
                     {formatCurrency(
                       Math.abs(financialSummary?.biggestImprovement?.difference)
-                    )} / month
+                    )}{' '}
+                    / month
                   </p>
                 </div>
               </div>
@@ -335,10 +324,7 @@ function InsightsTab() {
 
             <div className="rounded-xl border border-amber-200 bg-amber-50/50 px-5 py-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle
-                  size={24}
-                  className="mt-0.5 text-amber-600"
-                />
+                <AlertTriangle size={24} className="mt-0.5 text-amber-600" />
 
                 <div>
                   <p className="text-lg font-semibold text-[#56493e]">
@@ -357,25 +343,23 @@ function InsightsTab() {
                   </div>
 
                   <p className="mt-1 text-sm font-semibold text-[#6f6258]">
-                    Spending increased by
-                    {' '}
+                    Spending increased by{' '}
                     {formatCurrency(
                       Math.abs(financialSummary?.needsAttention?.difference)
-                    )} / month
+                    )}{' '}
+                    / month
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
-
       </section>
 
       <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-        <h1 className='mb-4 text-xl'>Improved Spending Habits</h1>
+        <h1 className="mb-4 text-xl">Improved Spending Habits</h1>
         <div className="space-y-4">
-          {data?.spendingImproved.map(item => (
+          {data?.spendingImproved.map((item) => (
             <InsightRow
               key={`${item.name}_${item.txnType}`}
               item={item}
@@ -386,9 +370,9 @@ function InsightsTab() {
       </section>
 
       <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-        <h1 className='mb-4 text-xl'>Needs Attention</h1>
+        <h1 className="mb-4 text-xl">Needs Attention</h1>
         <div className="space-y-4">
-          {data?.spendingIncreased.map(item => (
+          {data?.spendingIncreased.map((item) => (
             <InsightRow
               key={`${item.name}_${item.txnType}`}
               item={item}
@@ -399,9 +383,9 @@ function InsightsTab() {
       </section>
 
       <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-        <h1 className='mb-4 text-xl'>Income Trends</h1>
+        <h1 className="mb-4 text-xl">Income Trends</h1>
         <div className="space-y-4">
-          {data?.incomeChanges.map(item => (
+          {data?.incomeChanges.map((item) => (
             <InsightRow
               key={`${item.name}_${item.txnType}`}
               item={item}
@@ -410,13 +394,17 @@ function InsightsTab() {
           ))}
         </div>
       </section>
-
     </div>
   )
 }
 
-function SummaryCard({ title, currentValue = 0, previousValue = 0, percentageChange, isPositive }) 
-{
+function SummaryCard({
+  title,
+  currentValue = 0,
+  previousValue = 0,
+  percentageChange,
+  isPositive
+}) {
   const TrendIcon = isPositive ? ArrowUp : ArrowDown
 
   const trendColor = isPositive ? 'text-emerald-600' : 'text-rose-600'
@@ -487,9 +475,7 @@ function SummaryCard({ title, currentValue = 0, previousValue = 0, percentageCha
 
       <p
         className={`mt-2 text-sm font-medium ${
-          isPositive
-            ? 'text-emerald-600'
-            : 'text-rose-600'
+          isPositive ? 'text-emerald-600' : 'text-rose-600'
         }`}
       >
         {getChangeText()}
@@ -498,10 +484,7 @@ function SummaryCard({ title, currentValue = 0, previousValue = 0, percentageCha
   )
 }
 
-function InsightRow({
-  item,
-  variant = 'success',
-}) {
+function InsightRow({ item, variant = 'success' }) {
   const styles = {
     success: {
       border: 'border-emerald-200',
@@ -546,9 +529,7 @@ function InsightRow({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h4
-              className={`text-base font-semibold ${theme.title}`}
-            >
+            <h4 className={`text-base font-semibold ${theme.title}`}>
               {item.name}
             </h4>
 
@@ -583,9 +564,7 @@ function InsightRow({
             )}
           </div>
 
-          <p
-            className={`mt-2 text-sm ${theme.text}`}
-          >
+          <p className={`mt-2 text-sm ${theme.text}`}>
             {formatCurrency(item.previousAverage)}
             /mo
             {' → '}
@@ -595,18 +574,13 @@ function InsightRow({
         </div>
 
         <div className="shrink-0 text-right">
-          <p
-            className={`text-lg font-bold ${theme.value}`}
-          >
+          <p className={`text-lg font-bold ${theme.value}`}>
             {item.difference > 0 ? '+' : ''}
             {formatCurrency(item.difference)}
           </p>
 
           {item.percentageChange !== null && (
-            <PercentageBadge
-                value={item.percentageChange}
-                variant={variant}
-            />
+            <PercentageBadge value={item.percentageChange} variant={variant} />
           )}
         </div>
       </div>

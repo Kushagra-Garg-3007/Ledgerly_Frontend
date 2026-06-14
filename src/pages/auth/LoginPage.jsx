@@ -23,14 +23,14 @@ function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting }
   } = useForm({
     mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
-      rememberMe: false,
-    },
+      rememberMe: false
+    }
   })
 
   const onSubmit = async (values) => {
@@ -41,13 +41,10 @@ function LoginPage() {
       const loginData = await login({
         email: values.email,
         password: values.password,
-        rememberMe: values.rememberMe,
+        rememberMe: values.rememberMe
       })
 
-      let userData =
-        loginData?.user ||
-        loginData?.data?.user ||
-        null
+      let userData = loginData?.user || loginData?.data?.user || null
 
       // try {
       //   const profileData = await getProfile()
@@ -66,18 +63,13 @@ function LoginPage() {
 
       successToast('Welcome back. Login successful.')
 
-      const nextPath =
-        location.state?.from?.pathname ||
-        '/'
+      const nextPath = location.state?.from?.pathname || '/'
 
       navigate(nextPath, { replace: true })
     } catch (error) {
       dispatch(setAuthError(error.message))
 
-      errorToast(
-        error.message ||
-        'Unable to login. Please try again.'
-      )
+      errorToast(error.message || 'Unable to login. Please try again.')
     } finally {
       dispatch(setAuthLoading(false))
     }
@@ -91,11 +83,7 @@ function LoginPage() {
       footerLinkText="Create an account"
       footerTo="/signup"
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        noValidate
-        className="space-y-5"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
         <Input
           label="Email"
           name="email"
@@ -103,10 +91,7 @@ function LoginPage() {
           autoComplete="email"
           placeholder="name@company.com"
           error={errors.email?.message}
-          {...register(
-            'email',
-            authValidationRules.email
-          )}
+          {...register('email', authValidationRules.email)}
         />
 
         <Input
@@ -117,12 +102,10 @@ function LoginPage() {
           placeholder="Enter your password"
           className="pr-12"
           error={errors.password?.message}
-          rightElement={(
+          rightElement={
             <button
               type="button"
-              onClick={() =>
-                setShowPassword((prev) => !prev)
-              }
+              onClick={() => setShowPassword((prev) => !prev)}
               className="
                 flex h-8 w-8
                 items-center justify-center
@@ -132,11 +115,7 @@ function LoginPage() {
                 hover:bg-[#efe4d8]
                 hover:text-[#5f5047]
               "
-              aria-label={
-                showPassword
-                  ? 'Hide password'
-                  : 'Show password'
-              }
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
                 <Eye size={18} strokeWidth={2} />
@@ -144,15 +123,11 @@ function LoginPage() {
                 <EyeOff size={18} strokeWidth={2} />
               )}
             </button>
-          )}
-          {...register(
-            'password',
-            authValidationRules.password
-          )}
+          }
+          {...register('password', authValidationRules.password)}
         />
 
         <div className="flex items-center justify-between gap-3 pt-1">
-
           <Link
             to="#"
             className="
@@ -170,16 +145,12 @@ function LoginPage() {
         <Button
           type="submit"
           loading={loading || isSubmitting}
-          disabled={
-            loading ||
-            isSubmitting
-          }
+          disabled={loading || isSubmitting}
           fullWidth
         >
           Log in
         </Button>
       </form>
-
     </AuthLayout>
   )
 }
