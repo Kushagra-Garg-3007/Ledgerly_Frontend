@@ -1,295 +1,641 @@
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Brain,
-  CircleDollarSign,
-  Lightbulb,
-  LineChart,
-  TrendingDown,
-  TrendingUp,
-} from 'lucide-react'
-import {
-  formatCurrency,
-  formatPercent,
-  insightPeriods,
-  percentChange,
-} from './analyticsUtils'
-// import {
-//   DateRangeFields,
-//   PeriodControls,
-//   SectionTitle,
-// } from './AnalyticsPage'
+import { ArrowUp, ArrowDown, CheckCircle, AlertTriangle , Brain, CalendarDays, TrendingDown, TrendingUp } from 'lucide-react'
+// import { formatCurrency, formatPercent, insightPeriods, percentChange } from './analyticsUtils'
+import { useState, useEffect, useMemo } from 'react';
+import { errorToast } from '../../utils/toast';
+import SkeletonPage from '../../components/skeletons/SkeletonPage';
+import { formatAmount } from '../../utils/transactionUtils';
+import { getInsightDateRange } from '../../utils/getDataRangeUtils';
+import EmptyState from '../../components/common/EmptyState';
+import { fetchInsights } from '../../api/analysisApi';
 
-function InsightsTab({
-  period,
-  customRange,
-  onPeriodChange,
-  onCustomRangeChange,
-  data,
-}) {
+const QUICK_RANGES = [
+  { label: 'Current Month', value: 'current_month' },
+  { label: 'Last Month', value: 'last_month' },
+  { label: 'Last 3 Months', value: 'last_3_months' },
+  { label: 'Last 6 Months', value: 'last_6_months' },
+  { label: 'Last Year', value: 'last_year' },
+  { label: 'Custom', value: 'custom' },
+]
+
+const formatCurrency = (value) => formatAmount(Math.round(value || 0))
+
+function InsightsTab() {
+
+    const [period, setPeriod] = useState('current_month');
+  
+    const [customRange, setCustomRange] = useState({
+      previousPeriodStartDate: '',
+      previousPeriodEndDate: '',
+      currentPeriodStartDate: '',
+      currentPeriodEndDate: ''
+    });
+
+    function isValidCustomRange(period, customRange) {
+      if (period !== 'custom') return true
+
+      console.log("valid check: ", customRange)
+
+      return (
+        customRange.previousPeriodStartDate?.trim() &&
+        customRange.previousPeriodEndDate?.trim() &&
+        customRange.currentPeriodStartDate?.trim() &&
+        customRange.currentPeriodEndDate?.trim()
+      )
+    }
+  
+    const [data, setData] = useState(null)
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+      async function loadInsights() {
+        try {
+          setLoading(true)
+          const range = getInsightDateRange(period, customRange) 
+          const response = await fetchInsights(range)
+
+          setData(response)
+        } catch (err) {
+          errorToast(err?.message || "Something Went Wrong!")
+        } finally {
+          setLoading(false)
+        }
+      }
+  
+      if (!isValidCustomRange(period, customRange)) {
+        return
+      }
+  
+      loadInsights()
+    }, [period, customRange])
+
+    const percentChange = (current, previous) => {
+
+      if (current === 0 && previous === 0) return 0
+      let result
+      if (previous === 0) {
+        result = current > 0 ? 100 : current < 0 ? -100 : 0
+      }
+      else result = ((current - previous) / Math.abs(previous)) * 100
+
+      return Number(result.toFixed(2))
+    }
+  
+  const financialSummary = useMemo(() => {
+
+    if(!data) return null;
+
+    const currentIncome = data.incomeChanges.reduce(
+      (sum, item) => sum + item.currentAverage,
+      0
+    )
+    const previousIncome = data.incomeChanges.reduce(
+      (sum, item) => sum + item.previousAverage,
+      0
+    )
+
+    const currentExpense = [
+      ...data.spendingImproved,
+      ...data.spendingIncreased
+    ].reduce((sum, item) => sum + item.currentAverage, 0)
+
+    const previousExpense = [
+      ...data.spendingImproved,
+      ...data.spendingIncreased
+    ].reduce((sum, item) => sum + item.previousAverage, 0)
+
+    const currentSavings = currentIncome - currentExpense
+    const previousSavings = previousIncome - previousExpense
+
+    const biggestImprovement = data.spendingImproved.reduce(
+      (best, item) =>
+        !best || Math.abs(item.difference) > Math.abs(best.difference)
+          ? item
+          : best,
+      null
+    )
+
+    const needsAttention = data.spendingIncreased.reduce(
+      (worst, item) =>
+        !worst || item.difference > worst.difference
+          ? item
+          : worst,
+      null
+    )
+
+    return {
+      income: {
+        title: "Income",
+        currentValue: currentIncome,
+        previousValue: previousIncome,
+        percentageChange: percentChange(
+          currentIncome,
+          previousIncome
+        )
+      },
+
+      expense: {
+        title: "Expense",
+        currentValue: currentExpense,
+        previousValue: previousExpense,
+        percentageChange: percentChange(
+          currentExpense,
+          previousExpense
+        )
+      },
+
+      savings: {
+        title: "Savings",
+        currentValue: currentSavings,
+        previousValue: previousSavings,
+        percentageChange: percentChange(
+          currentSavings,
+          previousSavings
+        ),
+        directIncrease:
+          currentSavings - previousSavings
+      },
+
+      biggestImprovement,
+      needsAttention
+    }
+  }, [data])
+
+  const isCustom = period === 'custom'
+
+  function handleDateChange(e) {
+    const { name, value } = e.target
+
+    setCustomRange(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+
+  if (loading) return <SkeletonPage />
 
   return (
-    // <div className="grid gap-6">
-    //   <PeriodControls
-    //     label="Comparison"
-    //     value={period}
-    //     options={insightPeriods}
-    //     onChange={onPeriodChange}
-    //   />
-
-    //   {period === 'custom' ? (
-    //     <DateRangeFields
-    //       values={customRange}
-    //       fields={[
-    //         { key: 'currentFrom', label: 'Current from' },
-    //         { key: 'currentTo', label: 'Current to' },
-    //         { key: 'previousFrom', label: 'Previous from' },
-    //         { key: 'previousTo', label: 'Previous to' },
-    //       ]}
-    //       onChange={onCustomRangeChange}
-    //     />
-    //   ) : null}
-
-    //   <FinancialStory
-    //     incomeChange={incomeChange}
-    //     expenseChange={expenseChange}
-    //     savingsChange={savingsChange}
-    //     improved={improved}
-    //     attention={attention}
-    //   />
-
-    //   <section className="grid gap-4 md:grid-cols-3">
-    //     <TrendCard label="Income Trend" value={incomeChange} inverted={false} />
-    //     <TrendCard label="Expense Trend" value={expenseChange} inverted />
-    //     <TrendCard label="Savings Trend" value={savingsChange} inverted={false} />
-    //   </section>
-
-    //   <section className="grid gap-6 lg:grid-cols-2">
-    //     <InsightList
-    //       title="What Improved?"
-    //       icon={TrendingDown}
-    //       emptyText="No spending reductions found for this comparison."
-    //       items={improved.map((item) => ({
-    //         label: item.label,
-    //         text: `Reduced by ${formatCurrency(Math.abs(item.delta))}`,
-    //       }))}
-    //     />
-    //     <InsightList
-    //       title="What Needs Attention?"
-    //       icon={ArrowUpRight}
-    //       emptyText="No meaningful spending increases found."
-    //       items={attention.map((item) => ({
-    //         label: item.label,
-    //         text: `Increased by ${formatCurrency(item.delta)}`,
-    //       }))}
-    //     />
-    //   </section>
-
-    //   <InsightList
-    //     title="Income Changes"
-    //     icon={CircleDollarSign}
-    //     emptyText="No income changes found for this comparison."
-    //     items={incomeChanges.map((item) => ({
-    //       label: item.label,
-    //       text: item.delta > 0
-    //         ? `Increased by ${formatCurrency(item.delta)}`
-    //         : `Decreased by ${formatCurrency(Math.abs(item.delta))}`,
-    //     }))}
-    //   />
-
-    //   <JourneyChart data={data.journey} />
-
-    //   <CategoryInsights items={[...improved, ...attention].slice(0, 6)} />
-    // </div>
+    
     <div>
-      Insights tab
-    </div>
-  )
-}
+      <section className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
+        
+        <div className="mb-4 flex items-center gap-3">
+          <CalendarDays className="text-[#6f6258]" size={18} />
 
-function FinancialStory({ incomeChange, expenseChange, savingsChange, improved, attention }) {
-  const cards = [
-    {
-      icon: savingsChange >= 0 ? TrendingUp : TrendingDown,
-      text: savingsChange >= 0
-        ? `Savings improved by ${formatPercent(savingsChange)} compared to the previous period.`
-        : `Savings reduced by ${formatPercent(savingsChange)} compared to the previous period.`,
-      tone: savingsChange >= 0 ? 'good' : 'warn',
-    },
-    {
-      icon: expenseChange <= 0 ? ArrowDownRight : ArrowUpRight,
-      text: expenseChange <= 0
-        ? `Expenses reduced by ${formatPercent(expenseChange)}.`
-        : `Expenses increased by ${formatPercent(expenseChange)}.`,
-      tone: expenseChange <= 0 ? 'good' : 'warn',
-    },
-    {
-      icon: incomeChange >= 0 ? ArrowUpRight : ArrowDownRight,
-      text: incomeChange >= 0
-        ? `Income increased by ${formatPercent(incomeChange)}.`
-        : `Income decreased by ${formatPercent(incomeChange)}.`,
-      tone: incomeChange >= 0 ? 'good' : 'neutral',
-    },
-    improved[0] ? {
-      icon: Lightbulb,
-      text: `${improved[0].label} spending reduced by ${formatCurrency(Math.abs(improved[0].delta))}.`,
-      tone: 'good',
-    } : null,
-    attention[0] ? {
-      icon: Lightbulb,
-      text: `${attention[0].label} needs attention. It increased by ${formatCurrency(attention[0].delta)}.`,
-      tone: 'warn',
-    } : null,
-  ].filter(Boolean)
+          <div>
+            <h3 className="text-[1.05rem] font-semibold text-[#1f1814]">
+              Insight Filters
+            </h3>
+            <p className="text-sm text-[#766a61]">
+              Select time period for insights
+            </p>
+          </div>
+        </div>
 
-  return (
-    <section className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-      <SectionTitle
-        icon={Brain}
-        title="Financial Story"
-        subtitle="Plain-language observations from this comparison."
-      />
-      <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {cards.map((card) => (
-          <StoryCard key={card.text} {...card} />
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function StoryCard({ icon: Icon, text, tone }) {
-  const toneClass = tone === 'good'
-    ? 'bg-emerald-50 text-emerald-800 border-emerald-100'
-    : tone === 'warn'
-      ? 'bg-amber-50 text-amber-900 border-amber-100'
-      : 'bg-blue-50 text-blue-800 border-blue-100'
-
-  return (
-    <article className={`rounded-xl border p-4 ${toneClass}`}>
-      <Icon size={18} />
-      <p className="mt-3 text-sm font-semibold leading-6">{text}</p>
-    </article>
-  )
-}
-
-function TrendCard({ label, value, inverted }) {
-  const isPositive = inverted ? value <= 0 : value >= 0
-  const Icon = value >= 0 ? TrendingUp : TrendingDown
-
-  return (
-    <article className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-      <p className="text-sm font-semibold text-[#776a61]">{label}</p>
-      <div className={`mt-4 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-lg font-bold ${
-        isPositive ? 'border-emerald-100 bg-emerald-50 text-emerald-800' : 'border-rose-100 bg-rose-50 text-rose-800'
-      }`}>
-        <Icon size={18} />
-        {value >= 0 ? '+' : '-'}{formatPercent(value)}
-      </div>
-    </article>
-  )
-}
-
-function InsightList({ title, icon: Icon, items, emptyText }) {
-  return (
-    <section className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-      <SectionTitle icon={Icon} title={title} />
-      <div className="mt-5 grid gap-3">
-        {items.length ? items.map((item) => (
-          <article key={`${item.label}-${item.text}`} className="rounded-xl border border-[#eadfd3] bg-[#fbf8f4] px-4 py-3">
-            <p className="text-sm font-bold text-[#2f2621]">{item.label}</p>
-            <p className="mt-1 text-sm text-[#6c5f56]">{item.text}</p>
-          </article>
-        )) : (
-          <p className="rounded-xl border border-[#e9ded1] bg-[#fbf8f4] px-4 py-3 text-sm text-[#76685f]">{emptyText}</p>
-        )}
-      </div>
-    </section>
-  )
-}
-
-function JourneyChart({ data }) {
-  const max = Math.max(...data.flatMap((item) => [item.income, item.expense, Math.abs(item.savings)]), 1)
-
-  return (
-    <section className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-      <SectionTitle
-        icon={LineChart}
-        title="Financial Journey"
-        subtitle="Income, expenses, and savings over time."
-      />
-      <div className="mt-6 overflow-x-auto">
-        <div className="grid min-w-[720px] grid-cols-8 items-end gap-4">
-          {data.map((item) => (
-            <div key={item.label} className="grid gap-2">
-              <div className="flex h-44 items-end gap-1.5">
-                <Bar value={item.income} max={max} color="#2f8f76" />
-                <Bar value={item.expense} max={max} color="#c27a35" />
-                <Bar value={Math.abs(item.savings)} max={max} color="#356ea8" />
-              </div>
-              <p className="text-center text-xs font-semibold text-[#776a61]">{item.label}</p>
-            </div>
+        {/* Quick range buttons */}
+        <div className="flex flex-wrap gap-2">
+          {QUICK_RANGES.map((range) => (
+            <button
+              key={range.value}
+              onClick={() => setPeriod(range.value)}
+              className={`rounded-full border px-3 py-1.5 text-sm transition
+                ${
+                  period === range.value
+                    ? 'border-[#1f1814] bg-[#1f1814] text-white'
+                    : 'border-[#e4d8cb] bg-white text-[#6f6258] hover:bg-[#f7f3ee]'
+                }`}
+            >
+              {range.label}
+            </button>
           ))}
         </div>
-      </div>
-      <div className="mt-4 flex flex-wrap gap-4 text-xs font-semibold text-[#6c5f56]">
-        <Legend color="#2f8f76" label="Income" />
-        <Legend color="#c27a35" label="Expense" />
-        <Legend color="#356ea8" label="Savings" />
-      </div>
-    </section>
-  )
-}
 
-function Bar({ value, max, color }) {
-  return (
-    <div className="flex flex-1 items-end rounded-full bg-[#eee5dc]">
-      <div
-        className="w-full rounded-full"
-        style={{ height: `${Math.max(4, (value / max) * 100)}%`, backgroundColor: color }}
-      />
+        {/* Custom range */}
+        {isCustom && (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm text-[#6f6258]">
+                Period 1 Start Date
+              </label>
+              <input
+                type="date"
+                name="previousPeriodStartDate"
+                value={customRange.previousPeriodStartDate}
+                onChange={handleDateChange}
+                className="w-full rounded-xl border border-[#e4d8cb] bg-white px-3 py-2 text-sm text-[#1f1814] outline-none focus:border-[#1f1814]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#6f6258]">
+                Period 1 End Date
+              </label>
+              <input
+                type="date"
+                name="previousPeriodEndDate"
+                value={customRange.previousPeriodEndDate}
+                onChange={handleDateChange}
+                className="w-full rounded-xl border border-[#e4d8cb] bg-white px-3 py-2 text-sm text-[#1f1814] outline-none focus:border-[#1f1814]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#6f6258]">
+                Period 2 Start Date
+              </label>
+              <input
+                type="date"
+                name="currentPeriodStartDate"
+                value={customRange.currentPeriodStartDate}
+                onChange={handleDateChange}
+                className="w-full rounded-xl border border-[#e4d8cb] bg-white px-3 py-2 text-sm text-[#1f1814] outline-none focus:border-[#1f1814]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-[#6f6258]">
+                Period 2 End Date
+              </label>
+              <input
+                type="date"
+                name="currentPeriodEndDate"
+                value={customRange.currentPeriodEndDate}
+                onChange={handleDateChange}
+                className="w-full rounded-xl border border-[#e4d8cb] bg-white px-3 py-2 text-sm text-[#1f1814] outline-none focus:border-[#1f1814]"
+              />
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
+        <h2 className="text-xl font-bold text-[#1f1814] mb-6">Financial Summary</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <SummaryCard
+            title="Income"
+            currentValue={financialSummary?.income.currentValue}
+            previousValue={financialSummary?.income.previousValue}
+            percentageChange={financialSummary?.income.percentageChange}
+            isPositive={financialSummary?.income.percentageChange >= 0}
+          />
+
+          <SummaryCard
+            title="Expense"
+            currentValue={financialSummary?.expense.currentValue}
+            previousValue={financialSummary?.expense.previousValue}
+            percentageChange={financialSummary?.expense.percentageChange}
+            isPositive={financialSummary?.expense.percentageChange >= 0}
+          />
+
+          <SummaryCard
+            title="Savings"
+            currentValue={financialSummary?.savings.currentValue}
+            previousValue={financialSummary?.savings.previousValue}
+            percentageChange={financialSummary?.savings.percentageChange}
+            isPositive={financialSummary?.savings.percentageChange >= 0}
+          />
+        </div>
+
+        <div className="mt-6 border-t border-[#e4d8cb] pt-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle
+                  size={24}
+                  className="mt-0.5 text-emerald-600"
+                />
+
+                <div>
+                  <p className="text-lg font-semibold text-[#56493e]">
+                    Biggest Improvement
+                  </p>
+
+                  <div className="mt-2 flex items-center gap-2">
+                    <p className="text-md font-semibold text-emerald-800">
+                      {financialSummary?.biggestImprovement?.name}
+                    </p>
+
+                    <PercentageBadge
+                      value={financialSummary?.biggestImprovement?.percentageChange}
+                      variant="success"
+                    />
+                  </div>
+
+                  <p className="mt-1 text-sm font-semibold text-[#6f6258]">
+                    Spending reduced by
+                    {' '}
+                    {formatCurrency(
+                      Math.abs(financialSummary?.biggestImprovement?.difference)
+                    )} / month
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-amber-200 bg-amber-50/50 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle
+                  size={24}
+                  className="mt-0.5 text-amber-600"
+                />
+
+                <div>
+                  <p className="text-lg font-semibold text-[#56493e]">
+                    Needs Attention
+                  </p>
+
+                  <div className="mt-2 flex items-center gap-2">
+                    <p className="text-md font-semibold text-amber-800">
+                      {financialSummary?.needsAttention?.name}
+                    </p>
+
+                    <PercentageBadge
+                      value={financialSummary?.needsAttention?.percentageChange}
+                      variant="warning"
+                    />
+                  </div>
+
+                  <p className="mt-1 text-sm font-semibold text-[#6f6258]">
+                    Spending increased by
+                    {' '}
+                    {formatCurrency(
+                      Math.abs(financialSummary?.needsAttention?.difference)
+                    )} / month
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
+        <h1 className='mb-4 text-xl'>Improved Spending Habits</h1>
+        <div className="space-y-4">
+          {data?.spendingImproved.map(item => (
+            <InsightRow
+              key={`${item.name}_${item.txnType}`}
+              item={item}
+              variant="success"
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
+        <h1 className='mb-4 text-xl'>Needs Attention</h1>
+        <div className="space-y-4">
+          {data?.spendingIncreased.map(item => (
+            <InsightRow
+              key={`${item.name}_${item.txnType}`}
+              item={item}
+              variant="warning"
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-6 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
+        <h1 className='mb-4 text-xl'>Income Trends</h1>
+        <div className="space-y-4">
+          {data?.incomeChanges.map(item => (
+            <InsightRow
+              key={`${item.name}_${item.txnType}`}
+              item={item}
+              variant="income"
+            />
+          ))}
+        </div>
+      </section>
+
     </div>
   )
 }
 
-function Legend({ color, label }) {
+function SummaryCard({ title, currentValue = 0, previousValue = 0, percentageChange, isPositive }) 
+{
+  const TrendIcon = isPositive ? ArrowUp : ArrowDown
+
+  const trendColor = isPositive ? 'text-emerald-600' : 'text-rose-600'
+
+  const badgeBg = isPositive ? 'bg-emerald-50' : 'bg-rose-50'
+
+  const valueDifference = currentValue - previousValue
+
+  const getChangeText = () => {
+    const amount = formatCurrency(Math.abs(valueDifference))
+
+    switch (title.toLowerCase()) {
+      case 'income':
+        return valueDifference >= 0
+          ? `Income increased by ${amount}`
+          : `Income decreased by ${amount}`
+
+      case 'expense':
+        return valueDifference >= 0
+          ? `Expense increased by ${amount}`
+          : `Expense reduced by ${amount}`
+
+      case 'savings':
+        return valueDifference >= 0
+          ? `Savings improved by ${amount}`
+          : `Savings reduced by ${amount}`
+
+      default:
+        return valueDifference >= 0
+          ? `Increased by ${amount}`
+          : `Decreased by ${amount}`
+    }
+  }
+
   return (
-    <span className="inline-flex items-center gap-2">
-      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-      {label}
-    </span>
+    <div className="rounded-xl border border-[#e4d8cb] bg-[#fbf8f4] p-5">
+      <p className="text-sm font-semibold text-[#6f6258]">
+        {title.toUpperCase()}
+      </p>
+
+      <p className="mt-2 text-3xl font-bold text-[#1f1814]">
+        {formatCurrency(currentValue)}
+      </p>
+
+      <div className="mt-3 flex items-center gap-2">
+        {percentageChange === null ? (
+          <div className="rounded-lg bg-blue-50 px-2 py-1 text-sm font-semibold text-blue-700">
+            New
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            {/* <TrendIcon
+              size={16}
+              className={trendColor}
+            /> */}
+
+            <PercentageBadge
+              value={percentageChange}
+              variant={isPositive ? 'success' : 'warning'}
+            />
+          </div>
+        )}
+      </div>
+
+      <p className="mt-3 text-sm text-[#6b5c50]">
+        Previous: {formatCurrency(previousValue)}
+      </p>
+
+      <p
+        className={`mt-2 text-sm font-medium ${
+          isPositive
+            ? 'text-emerald-600'
+            : 'text-rose-600'
+        }`}
+      >
+        {getChangeText()}
+      </p>
+    </div>
   )
 }
 
-function CategoryInsights({ items }) {
+function InsightRow({
+  item,
+  variant = 'success',
+}) {
+  const styles = {
+    success: {
+      border: 'border-emerald-200',
+      accent: 'border-l-emerald-500',
+      title: 'text-[#1f1814]',
+      text: 'text-[#6f6258]',
+      value: 'text-emerald-700'
+    },
+
+    warning: {
+      border: 'border-amber-200',
+      accent: 'border-l-amber-500',
+      title: 'text-[#1f1814]',
+      text: 'text-[#6f6258]',
+      value: 'text-amber-700'
+    },
+
+    income: {
+      border: 'border-slate-200',
+      accent: 'border-l-slate-500',
+      title: 'text-[#1f1814]',
+      text: 'text-[#6f6258]',
+      value: 'text-slate-700'
+    }
+  }
+
+  const theme = styles[variant]
+
   return (
-    <section className="rounded-[1.4rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_12px_28px_rgba(40,28,20,0.06)]">
-      <SectionTitle
-        icon={Lightbulb}
-        title="Smart Insights"
-        subtitle="Category observations without asking you to read more charts."
-      />
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
-        {items.length ? items.map((item) => (
-          <article key={item.label} className="rounded-xl border border-[#eadfd3] bg-[#fbf8f4] px-4 py-3">
-            <p className="text-sm font-bold text-[#2f2621]">{item.label}</p>
-            <p className="mt-1 text-sm leading-6 text-[#6c5f56]">
-              {item.delta > 0
-                ? `Spending increased by ${formatPercent(item.percent)}. Review recent transactions before this becomes a pattern.`
-                : `Spending reduced by ${formatPercent(item.percent)}. This is a positive shift worth maintaining.`}
-            </p>
-            <button
-              type="button"
-              className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-[#356ea8]"
+    <div
+      className={`
+        rounded-xl
+        border
+        ${theme.border}
+        ${theme.accent}
+        border-l-4
+        bg-white
+        p-4
+        shadow-sm
+      `}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h4
+              className={`text-base font-semibold ${theme.title}`}
             >
-              View Details
-            </button>
-          </article>
-        )) : (
-          <p className="rounded-xl border border-[#e9ded1] bg-[#fbf8f4] px-4 py-3 text-sm text-[#76685f]">No category changes found yet.</p>
-        )}
+              {item.name}
+            </h4>
+
+            {item.isNew && (
+              <span
+                className="
+                  rounded-full
+                  bg-emerald-100
+                  px-2 py-0.5
+                  text-xs
+                  font-medium
+                  text-emerald-700
+                "
+              >
+                New
+              </span>
+            )}
+
+            {item.isRemoved && (
+              <span
+                className="
+                  rounded-full
+                  bg-slate-100
+                  px-2 py-0.5
+                  text-xs
+                  font-medium
+                  text-slate-600
+                "
+              >
+                Removed
+              </span>
+            )}
+          </div>
+
+          <p
+            className={`mt-2 text-sm ${theme.text}`}
+          >
+            {formatCurrency(item.previousAverage)}
+            /mo
+            {' → '}
+            {formatCurrency(item.currentAverage)}
+            /mo
+          </p>
+        </div>
+
+        <div className="shrink-0 text-right">
+          <p
+            className={`text-lg font-bold ${theme.value}`}
+          >
+            {item.difference > 0 ? '+' : ''}
+            {formatCurrency(item.difference)}
+          </p>
+
+          {item.percentageChange !== null && (
+            <PercentageBadge
+                value={item.percentageChange}
+                variant={variant}
+            />
+          )}
+        </div>
       </div>
-    </section>
+    </div>
+  )
+}
+
+function PercentageBadge({ value, variant = 'success' }) {
+  if (value === null || value === undefined) return null
+
+  const styles = {
+    success: 'bg-emerald-100 text-emerald-700',
+    warning: 'bg-amber-100 text-amber-700',
+    income: 'bg-slate-100 text-slate-700'
+  }
+
+  return (
+    <span
+      className={`
+        rounded-full
+        px-2 py-1
+        text-xs
+        font-semibold
+        ${styles[variant]}
+      `}
+    >
+      {value > 0 ? '+' : ''}
+      {value}%
+    </span>
   )
 }
 
