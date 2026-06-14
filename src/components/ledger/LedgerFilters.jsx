@@ -18,16 +18,6 @@ function LedgerFilters({ filters, categories, onFilterChange }) {
   return (
     <section className="rounded-[1.5rem] border border-[#e4d8cb] bg-white/76 p-5 shadow-[0_12px_30px_rgba(40,28,20,0.06)] backdrop-blur-xl">
       <div className="grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-4">
-          <Input
-            name="ledger-search"
-            label="Search"
-            placeholder="Search notes, category, type..."
-            value={filters.search}
-            onChange={(event) => onFilterChange('search', event.target.value)}
-            rightElement={<Search size={16} />}
-          />
-        </div>
 
         <div className="lg:col-span-2">
           <label
